@@ -19,9 +19,11 @@ import ChannelLayout from "./components/Channel/ChannelLayout.jsx";
 import ChannelPlaylist from "./components/Channel/ChannelPlaylist.jsx";
 import ChannelTweet from "./components/Channel/ChannelTweet.jsx";
 import ChannelSubcribed from "./components/Channel/ChannelSubcribed.jsx";
-
+import Login from "./components/Login/Login.jsx";
+import { Provider } from "react-redux";
+import {store} from "../src/Utils/store/store.js"
 const router = createBrowserRouter(
-  createRoutesFromElements(
+  createRoutesFromElements(<>
     <Route path="/" element={<Layout />}>
       <Route path="" element={<VideoPage />} />
       <Route path="watch/:videoId" element={<VideoDetailpage />} />
@@ -34,16 +36,20 @@ const router = createBrowserRouter(
       </Route>
       <Route path="*" element={<div>404</div>} />
     </Route>
+      <Route path="login" element={<Login/>} ></Route>
+  </>
   )
 );
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
+  
+    <Provider store={store} >
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
-  </StrictMode>
+    </Provider>
+  
 );

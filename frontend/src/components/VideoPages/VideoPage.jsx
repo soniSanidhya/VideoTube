@@ -7,7 +7,15 @@ import { useSharedVideoQuery } from "../../Utils/sharedQuaries/SharedVideoQuery"
 import viewsFormatter from "../../Utils/viewsFormatter";
 import timeFormatter from "../../Utils/timeformater";
 import durationFormatter from "../../Utils/durationFormatter";
+import { useSelector } from "react-redux";
 const VideoPage = () => {
+
+  const isLogin = useSelector((state) => state.isLogin.isLogin);
+
+  console.log("isLogin", isLogin);
+  
+
+
   const { data, isLoading, isError, error } = useSharedVideoQuery();
   // const response = axios.get("/api/videos/");
   // console.log("response", response);
@@ -40,22 +48,26 @@ const VideoPage = () => {
                       {durationFormatter(element.duration)}
                     </span>
                   </div>
-                  <div class="flex gap-x-2">
-                    <div class="h-10 w-10 shrink-0">
+                  <div class="flex gap-x-2 items-center">
+                    <div class="h-10 w-10 shrink-0 ">
+                    <Link to={`/channel/c/${element?.owner.username}`} class="block">
                       <img
                         src={element.owner.avatar}
                         alt={element.owner.username}
-                        class="h-full w-full rounded-full"
+                        class="h-10 w-10 rounded-full"
                       />
+                      </Link>
                     </div>
                     <div class="w-full">
                       <h6 class="mb-1 font-semibold">{element.title}</h6>
                       <p class="flex text-sm text-gray-200">
                         {viewsFormatter(element.views)} Views · {timeFormatter(element.createdAt)}
                       </p>
+                      <Link to={`/channel/c/${element?.owner.username}`} class="block">
                       <p class="text-sm text-gray-200">
                         @{element.owner.username}
                       </p>
+                      </Link>
                     </div>
                   </div>
                 </div>

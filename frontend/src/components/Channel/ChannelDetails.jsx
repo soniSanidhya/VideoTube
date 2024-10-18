@@ -1,16 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { useParams } from "react-router-dom";
+import { Link, NavLink, useParams } from "react-router-dom";
 import { usesharedFetchChannelDetails } from "../../Utils/sharedQuaries/sharedChannelDetails";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
-
-
-const ChannelDetails = ({isChannel}) => {
+const ChannelDetails = ({ isChannel }) => {
+  const isLogin = useSelector((state) => state.isLogin.isLogin);
   const { username } = useParams();
   console.log(username);
 
-  const { data, isLoading, isError, error } = usesharedFetchChannelDetails(username)
+  const { data, isLoading, isError, error } =
+    usesharedFetchChannelDetails(username);
 
   if (isLoading) {
     return <div className="text-center">Loading...</div>;
@@ -21,10 +22,9 @@ const ChannelDetails = ({isChannel}) => {
 
   console.log(data.data);
 
-  if(data.data.data){
+  if (data.data.data) {
     isChannel();
     console.log("called");
-    
   }
 
   return data?.data.data ? (
@@ -78,32 +78,42 @@ const ChannelDetails = ({isChannel}) => {
         </div>
         <ul class="no-scrollbar sticky top-[66px] z-[2] flex flex-row gap-x-2 overflow-auto border-b-2 border-gray-400 bg-[#121212] py-2 sm:top-[82px]">
           <li class="w-full">
-            <button class="w-full border-b-2 border-[#ae7aff] bg-white px-3 py-1.5 text-[#ae7aff]">
-              Videos
-            </button>
+            <NavLink  to={`/channel/c/${username}/videos`} className={({isActive}) => (isActive ? " bg-white": "" ) }>
+              <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                Videos
+              </button>
+            </NavLink>
           </li>
           <li class="w-full">
-            <button class="w-full border-b-2 border-transparent px-3 py-1.5 text-gray-400">
-              Playlist
-            </button>
+          <NavLink  to={`/channel/c/${username}/playlists`} className={({isActive}) => (isActive ? " bg-white": "" ) }>
+
+              <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                Playlist
+              </button>
+            </NavLink>
           </li>
           <li class="w-full">
-            <button class="w-full border-b-2 border-transparent px-3 py-1.5 text-gray-400">
-              Tweets
-            </button>
+          <NavLink  to={`/channel/c/${username}/tweets`} className={({isActive}) => (isActive ? " bg-white": "" ) }>
+
+              <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                Tweets
+              </button>
+            </NavLink>
           </li>
           <li class="w-full">
-            <button class="w-full border-b-2 border-transparent px-3 py-1.5 text-gray-400">
-              Subscribed
-            </button>
+          <NavLink  to={`/channel/c/${username}/subscribed`} className={({isActive}) => (isActive ? " bg-white": "" ) }>
+
+              <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                Subscribed
+              </button>
+            </NavLink>
           </li>
         </ul>
       </div>
-    </section>) : 
-    (
-      <div>Channel not found</div>
-    );
-  
+    </section>
+  ) : (
+    <div>Channel not found</div>
+  );
 };
 
 export default ChannelDetails;
