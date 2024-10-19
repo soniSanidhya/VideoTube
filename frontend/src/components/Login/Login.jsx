@@ -16,18 +16,13 @@ const Login = () => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const navigate = useNavigate();
-  const isLogin = useSelector((state) => state.isLogin.isLogin);
+  const isLogin = useSelector((state) => state.auth.isLogin);
   const dispatch = useDispatch();
 
   const { mutate } = useMutation({
     mutationFn: ({ username, password }) => postLogin({ username, password }),
     onSuccess: (data) => {
-      console.log(isLogin);
-
       dispatch(login());
-      console.log(isLogin);
-
-      console.log(data);
       navigate("/");
     },
     onError: (error) => {

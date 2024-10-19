@@ -27,6 +27,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
 
     console.log("hello hi video");
 
+    if (!title || !description) {
+        throw new ApiError(400, "Please provide title and description");
+    }
+
     // TODO: get video, upload to cloudinary, create video
     const videoLocalPath = req.files?.videoFile[0]?.path;
     const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
@@ -40,7 +44,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Something went wrong while uploading video");
     }
     console.log("duration: ", uploadedVideo.duration);
-    const video = Video.create({
+    const video = await Video.create({
         videoFile: uploadedVideo.url,
         thumbnail: uploadedThumbnail.url,
         title,

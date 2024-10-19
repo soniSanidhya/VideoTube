@@ -10,7 +10,7 @@ import durationFormatter from "../../Utils/durationFormatter";
 import { useSelector } from "react-redux";
 const VideoPage = () => {
 
-  const isLogin = useSelector((state) => state.isLogin.isLogin);
+  const isLogin = useSelector((state) => state.auth.isLogin);
 
   console.log("isLogin", isLogin);
   

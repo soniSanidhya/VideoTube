@@ -1,51 +1,91 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useSharedVideoQuery } from "../../Utils/sharedQuaries/SharedVideoQuery";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 
 import viewsFormatter from "../../Utils/viewsFormatter";
 import timeFormatter from "../../Utils/timeformater";
 import { usesharedFetchChannelDetails } from "../../Utils/sharedQuaries/sharedChannelDetails";
 import durationFormatter from "../../Utils/durationFormatter";
+import {
+  useFetchComments,
+  useFetchLikesAndDislikes,
+} from "../../Utils/sharedQuaries/sharedfetchcommentandLikes";
 
-const fetchVideo = (videoId) => {
-  return axios.get(`/api/videos/v/${videoId}`);
-};
+const postlike = (videoId, p) =>
+  axios.post(`/api/likes/toggle/${p}/${videoId}`);
 
-const fetchComments = (videoId) => {
-  return axios.get(`/api/comments/${videoId}`);
-};
+const postLike = ({ id, isLiked }) =>
+  axios.post(`/api/likes/toggle/v/${id}`, { isLiked });
+
+const postComment = (videoId, comment ) =>
+  axios.post(`/api/comments/${videoId}`, { content : comment });
+
+const postSubcribe = (channelId) => axios.post(`/api/subscriptions/c/${channelId}`);
+const fetchVideo = (videoId) => axios.get(`/api/videos/v/${videoId}`);
 
 const VideoDetailpage = () => {
+  const [comment, setComment] = useState("");
   const { videoId } = useParams();
   const queryClient = useQueryClient();
   useEffect(() => {
     queryClient.removeQueries();
   }, [videoId]);
 
-  console.log(videoId);
   const {
-    data: video,
+    data: relatedVideos,
+    isLoading: isRelatedVideosLoading,
+    isError: isRelatedVideosError,
+    error: errorRelatedVideos,
+  } = useSharedVideoQuery();
+
+  const {
+    data: videoData,
     isLoading: isVideoLoading,
     isError: isVideoError,
-    error: videoError,
   } = useQuery({
     queryKey: ["video", videoId],
     queryFn: () => fetchVideo(videoId),
-    refetchOnMount: true,
+    staleTime: Infinity,
   });
-  const { data, isLoading, isError, error } = useSharedVideoQuery();
+
+  const { data: Likedata, isError: isLikeError } =
+    useFetchLikesAndDislikes(videoId);
   const {
-    data: comments,
+    data: commentData,
     isLoading: isCommentsLoading,
-    isError: isCommentsError,
-    error: commentsError,
-  } = useQuery({
-    queryKey: ["comments", videoId],
-    queryFn: () => fetchComments(videoId),
-    staleTime: 1000 * 60,
+    isError: isCommentError,
+  } = useFetchComments(videoId);
+
+  
+
+  const {mutate: postCommentMutation} = useMutation({
+    mutationFn: (comment) => postComment(videoId, comment),
+    onSuccess: (newdata) => {
+     queryClient.invalidateQueries(["comments", videoId]);
+    },
+  })   
+
+  const {mutate : postSubcribeMutation} = useMutation({
+    mutationFn : (channelId) => postSubcribe(channelId),
+    onSuccess : () => {
+      queryClient.invalidateQueries(["channel", videoData?.data.data.owner.username]);
+      console.log("subscribed");
+    }
+  })
+       
+    
+  console.log("like data", Likedata);
+  console.log("comment data", commentData);
+  console.log("video data", videoData);
+  console.log("comment posted" , commentData);
+  const { mutate: toggleLikeMutaion } = useMutation({
+    mutationFn: ({ id, isLiked }) => postLike({ id, isLiked }),
+    onSuccess: () => {
+      console.log("successfully  liked");
+    },
   });
 
   const {
@@ -53,8 +93,20 @@ const VideoDetailpage = () => {
     isLoading: isChannelLoading,
     isError: isChannelError,
     error: channelError,
-  } = usesharedFetchChannelDetails(video?.data.data.owner.username);
+  } = usesharedFetchChannelDetails(videoData?.data.data.owner.username);
 
+  const isLoading =
+    isVideoLoading ||
+    isRelatedVideosLoading ||
+    isCommentsLoading ||
+    isChannelLoading;
+  const isError =
+    isVideoError ||
+    isRelatedVideosError ||
+    isCommentError ||
+    isChannelError ||
+    isLikeError;
+  const error = errorRelatedVideos || channelError;
   if (isLoading) {
     return <div className="text-center">Loading...</div>;
   }
@@ -62,18 +114,19 @@ const VideoDetailpage = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  console.log(comments);
-
   return (
     <section class="w-full pb-[70px] sm:ml-[70px] sm:pb-0">
       <div class="flex w-full flex-wrap gap-4 p-4 lg:flex-nowrap">
-        {video && (
+        {videoData?.data.data && (
           <div class="col-span-12 w-full">
             <div class="relative mb-4 w-full pt-[56%]">
-              {video?.data.data.videoFile && (
+              {videoData?.data.data.videoFile && (
                 <div class="absolute inset-0">
                   <video class="h-full w-full" controls="" autoplay="" muted="">
-                    <source src={video?.data.data.videoFile} type="video/mp4" />
+                    <source
+                      src={videoData?.data.data.videoFile}
+                      type="video/mp4"
+                    />
                   </video>
                 </div>
               )}
@@ -85,10 +138,12 @@ const VideoDetailpage = () => {
             >
               <div class="flex flex-wrap gap-y-2">
                 <div class="w-full md:w-1/2 lg:w-full xl:w-1/2">
-                  <h1 class="text-lg font-bold">{video?.data.data.title}</h1>
+                  <h1 class="text-lg font-bold">
+                    {videoData?.data.data.title}
+                  </h1>
                   <p class="flex text-sm text-gray-200">
-                    {viewsFormatter(video.data.data.views)} Views ·{" "}
-                    {timeFormatter(video.data.data.createdAt)}
+                    {viewsFormatter(videoData?.data.data.views)} Views ·{" "}
+                    {timeFormatter(videoData?.data.data.createdAt)}
                   </p>
                 </div>
                 <div class="w-full md:w-1/2 lg:w-full xl:w-1/2">
@@ -96,8 +151,14 @@ const VideoDetailpage = () => {
                     <div class="flex overflow-hidden rounded-lg border">
                       <button
                         class="group/btn flex items-center gap-x-2 border-r border-gray-700 px-4 py-1.5 after:content-[attr(data-like)] hover:bg-white/10 focus:after:content-[attr(data-like-alt)]"
-                        data-like="3050"
-                        data-like-alt="3051"
+                        onClick={() => {
+                          toggleLikeMutaion({
+                            id: videoData?.data.data._id,
+                            isLiked: true,
+                          });
+                        }}
+                        data-like={Likedata?.like?.data.likeCount || 0}
+                        data-like-alt={Likedata?.like?.data.likeCount + 1 || 1}
                       >
                         <span class="inline-block w-5 group-focus/btn:text-[#ae7aff]">
                           <svg
@@ -118,8 +179,16 @@ const VideoDetailpage = () => {
                       </button>
                       <button
                         class="group/btn flex items-center gap-x-2 px-4 py-1.5 after:content-[attr(data-like)] hover:bg-white/10 focus:after:content-[attr(data-like-alt)]"
-                        data-like="20"
-                        data-like-alt="21"
+                        onClick={() => {
+                          toggleLikeMutaion({
+                            id: videoData?.data.data._id,
+                            isLiked: false,
+                          });
+                        }}
+                        data-like={Likedata?.dislikes?.data.disLikeCount}
+                        data-like-alt={
+                          Likedata?.dislikes?.data.disLikeCount + 1
+                        }
                       >
                         <span class="inline-block w-5 group-focus/btn:text-[#ae7aff]">
                           <svg
@@ -381,7 +450,7 @@ const VideoDetailpage = () => {
                     </div>
                   </div>
                   <div class="block">
-                    <button class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
+                    <button onClick={()=>{postSubcribeMutation(channel.data.data._id)}} class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
                       <span class="inline-block w-5">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -408,27 +477,33 @@ const VideoDetailpage = () => {
               )}
               <hr class="my-4 border-white" />
               <div class="h-5 overflow-hidden group-focus:h-auto">
-                <p class="text-sm">{video.data.data.description}</p>
+                <p class="text-sm">{videoData?.data.data.description}</p>
               </div>
             </div>
             <button class="peer w-full rounded-lg border p-4 text-left duration-200 hover:bg-white/5 focus:bg-white/5 sm:hidden">
               <h6 class="font-semibold">
-                {comments?.data.data.commentsCount || 0} Comments...
+                {commentData?.data.data.commentsCount || 0} Comments...
               </h6>
             </button>
             <div class="fixed inset-x-0 top-full z-[60] h-[calc(100%-69px)] overflow-auto rounded-lg border bg-[#121212] p-4 duration-200 hover:top-[67px] peer-focus:top-[67px] sm:static sm:h-auto sm:max-h-[500px] lg:max-h-none">
               <div class="block">
                 <h6 class="mb-4 font-semibold">
-                  {comments?.data.data.commentsCount || 0} Comments
+                  {commentData?.data.data.commentsCount || 0} Comments
                 </h6>
-                <input
-                  type="text"
-                  class="w-full rounded-lg border bg-transparent px-2 py-1 placeholder-white"
-                  placeholder="Add a Comment"
-                />
+                <div class="flex gap-x-4">
+                  <input
+                    type="text"
+                    class="w-full rounded-lg border bg-transparent px-2 py-1 placeholder-white"
+                    placeholder="Add a Comment"
+                    onChange={(e) => setComment(e.target.value)}
+                  />
+                  <button onClick={()=>{ comment.trim().length >0 && postCommentMutation(comment)}} class=" rounded-lg bg-[#ae7aff] px-4 py-1 text-black hover:bg-[#7a50bc]  ">
+                    Send
+                  </button>
+                </div>
               </div>
               <hr class="my-4 border-white" />
-              {comments?.data.data.comments?.map((comment) => (
+              {commentData?.data.data.comments?.map((comment) => (
                 <div>
                   <div class="flex gap-x-4">
                     <div class="mt-2 h-11 w-11 shrink-0">
@@ -458,32 +533,32 @@ const VideoDetailpage = () => {
           </div>
         )}
         <div class="col-span-12 flex w-full shrink-0 flex-col gap-3 lg:w-[350px] xl:w-[400px]">
-          {data?.data.data?.map((element) => (
-            <Link to={`/watch/${element._id}`} key={element._id}>
+          {relatedVideos?.data.data?.map((video) => (
+            <Link to={`/watch/${video._id}`} key={video._id}>
               <div class="w-full gap-x-2 border pr-2 md:flex">
                 <div class="relative mb-2 w-full md:mb-0 md:w-5/12">
                   <div class="w-full pt-[56%]">
                     <div class="absolute inset-0">
                       <img
-                        src={element.thumbnail}
-                        alt={element.title}
+                        src={video.thumbnail}
+                        alt={video.title}
                         class="h-full w-full"
                       />
                     </div>
                     <span class="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
-                      {durationFormatter(element.duration)}
+                      {durationFormatter(video.duration)}
                     </span>
                   </div>
                 </div>
                 <div class="flex gap-x-2 px-2 pb-4 pt-1 md:w-7/12 md:px-0 md:py-0.5">
                   <div class="w-full pt-1 md:pt-0">
-                    <h6 class="mb-1 text-sm font-semibold">{element.title}</h6>
+                    <h6 class="mb-1 text-sm font-semibold">{video.title}</h6>
                     <p class="mb-0.5 mt-2 text-sm text-gray-200">
-                      {element.owner.username}
+                      {video.owner.username}
                     </p>
                     <p class="flex text-sm text-gray-200">
-                      {viewsFormatter(element.views)} Views ·{" "}
-                      {timeFormatter(element.createdAt)}
+                      {viewsFormatter(video.views)} Views ·{" "}
+                      {timeFormatter(video.createdAt)}
                     </p>
                   </div>
                 </div>
@@ -495,5 +570,4 @@ const VideoDetailpage = () => {
     </section>
   );
 };
-
 export default VideoDetailpage;

@@ -19,9 +19,11 @@ import ChannelLayout from "./components/Channel/ChannelLayout.jsx";
 import ChannelPlaylist from "./components/Channel/ChannelPlaylist.jsx";
 import ChannelTweet from "./components/Channel/ChannelTweet.jsx";
 import ChannelSubcribed from "./components/Channel/ChannelSubcribed.jsx";
+
 import Login from "./components/Login/Login.jsx";
 import { Provider } from "react-redux";
 import {store} from "../src/Utils/store/store.js"
+import VideoListPage from "./components/VideoPages/VideoListPage.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(<>
     <Route path="/" element={<Layout />}>
@@ -35,6 +37,7 @@ const router = createBrowserRouter(
         <Route path="subscribed" element={<ChannelSubcribed/>} />
       </Route>
       <Route path="*" element={<div>404</div>} />
+      <Route path="videoList/:v" element={<VideoListPage/>} />
     </Route>
       <Route path="login" element={<Login/>} ></Route>
   </>

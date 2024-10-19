@@ -1,24 +1,36 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import React from "react";
-import  viewsFormatter  from "../../Utils/viewsFormatter.js";
+import React, { useEffect, useState } from "react";
+import viewsFormatter from "../../Utils/viewsFormatter.js";
 import timeFormatter from "../../Utils/timeformater.js";
 import durationFormatter from "../../Utils/durationFormatter.js";
 import { Link, useParams } from "react-router-dom";
+import { useGetCurrentUser } from "../../Utils/sharedQuaries/sharedGetCurrentUser.js";
+import { useSelector } from "react-redux";
+import VideoModelPopUp from "./VideoModelPopUp.jsx";
 
 const fetchChannelVideos = (username) => {
   return axios.get(`/api/videos/u/${username}`);
 };
 const ChannelVideos = () => {
   const { username } = useParams();
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const [isMyChannel, setIsMyChannel] = useState(false);
+  const { data: user } = useGetCurrentUser(isLogin);
+
+  useEffect(() => {
+    if (user) {
+      if (user.data.data.username === username) {
+        setIsMyChannel(true);
+      }
+    }
+  }, [user]);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["channelVideos", username],
     queryFn: () => fetchChannelVideos(username),
     staleTime: 1000 * 60 * 5,
   });
-
-  console.log("videos", data);
 
   if (isLoading) {
     return <div className="text-center">Loading...</div>;
@@ -28,36 +40,36 @@ const ChannelVideos = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  return data.data.data.length > 0 ? (
+  return (data.data.data.length > 0 ? (
+    <>
     <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4 pt-2">
-      {
-        data.data.data.map((video) => (
-          
-          <Link to={`/watch/${video._id}`} key={video._id}>
-
+      {data.data.data.map((video) => (
+        <Link to={`/watch/${video._id}`} key={video._id}>
           <div class="w-full">
-          <div class="relative mb-2 w-full pt-[56%]">
-            <div class="absolute inset-0">
-              <img
-                src={video.thumbnail}
-                 alt={video.title}
-                class="h-full w-full"
-              />
+            <div class="relative mb-2 w-full pt-[56%]">
+              <div class="absolute inset-0">
+                <img
+                  src={video.thumbnail}
+                  alt={video.title}
+                  class="h-full w-full"
+                />
+              </div>
+              <span class="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
+                {durationFormatter(video.duration)}
+              </span>
             </div>
-            <span class="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
-              {durationFormatter(video.duration)}
-            </span>
+            <h6 class="mb-1 font-semibold">{video.title}</h6>
+            <p class="flex text-sm text-gray-200">
+              {viewsFormatter(video.views)} Views ·{" "}
+              {timeFormatter(video.createdAt)}{" "}
+            </p>
           </div>
-          <h6 class="mb-1 font-semibold">
-            {video.title}
-          </h6>
-          <p class="flex text-sm text-gray-200">{viewsFormatter(video.views)} Views · {timeFormatter(video.createdAt)} </p>
-        </div>
         </Link>
-        ))
-      }
+      ))}
     </div>
-  ) : (
+    <VideoModelPopUp/>
+    </>
+  ) : (<>
     <div class="flex justify-center p-4">
       <div class="w-full max-w-sm text-center">
         <p class="mb-3 w-full">
@@ -84,9 +96,32 @@ const ChannelVideos = () => {
           This page has yet to upload a video. Search another page in order to
           find more videos.
         </p>
+        {isMyChannel && (
+          <button class="mt-4 inline-flex items-center gap-x-2 bg-[#ae7aff] px-3 py-2 font-semibold text-black">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              aria-hidden="true"
+              class="h-5 w-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              ></path>
+            </svg>
+            New video
+          </button>
+        )}
       </div>
     </div>
-  );
-};
+    <VideoModelPopUp/>
+    </>
+  )
+  
+)};
 
 export default ChannelVideos;

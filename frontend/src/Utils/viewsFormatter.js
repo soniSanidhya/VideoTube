@@ -4,7 +4,7 @@ function floorToTwoDecimals(number) {
 
 const viewsFormatter = (views) => {
 
-    console.log("views: ", views);
+
     
     if(views < 1000){
         return views;

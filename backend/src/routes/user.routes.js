@@ -11,6 +11,8 @@ import {
     getCurrentUser,
     getUserChannelProfile,
     getWatchHistory,
+    getLikedVideos,
+    getMyvideos,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
@@ -49,4 +51,7 @@ router.route("/updateCoverImage").patch(
 router.route("/current-user").get(verifyJWT , getCurrentUser);
 router.route("/channel/:username").get(getUserChannelProfile);
 router.route("/history").get(verifyJWT, getWatchHistory);
+router.route("/likedVideos").get(verifyJWT, getLikedVideos);
+router.route("/myVideos").get(verifyJWT, getMyvideos);
+
 export default router;

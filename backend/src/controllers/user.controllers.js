@@ -9,6 +9,9 @@ import {
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import { Like } from "../models/like.model.js";
+import { Video } from "../models/video.model.js";
+import { subscribe } from "diagnostics_channel";
 
 const generateRefreshTokenAndAcessToken = async (userId) => {
     try {
@@ -115,7 +118,7 @@ const userLogin = asyncHandler(async (req, res) => {
     }
 
     const user = await User.findOne({
-        $or: [{ username : username || email }, { email : email || username }],
+        $or: [{ username: username || email }, { email: email || username }],
     });
 
     if (!user) {
@@ -361,7 +364,9 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Username Missing!!");
     }
     console.log(username);
-    
+
+    const userId = req.user?._id;
+
     const channel = await User.aggregate([
         {
             $match: {
@@ -394,7 +399,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 },
                 isSubscribed: {
                     $cond: {
-                        if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+                        if: userId ? { $in: [userId, "$subscriber.subscriber"] } : false,
                         then: true,
                         else: false,
                     },
@@ -412,11 +417,13 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 channelSubscribedToCount: 1,
                 isSubscribed: 1,
                 createdAt: 1,
+                subscribers: 1,
+                subscribedTo: 1,
             },
         },
     ]);
     console.log(channel);
-    
+
     if (!channel) {
         throw new ApiError(404, "channel does not exist");
     }
@@ -457,16 +464,15 @@ const getWatchHistory = asyncHandler(async (req, res) => {
                                         avatar: 1,
                                         username: 1,
                                     },
-                                    
                                 },
                                 {
-                                    $addFields : {
-                                        owner : {
-                                            $first : "$owner"
-                                        }
-                                    }
-                                }
-                            ]
+                                    $addFields: {
+                                        owner: {
+                                            $first: "$owner",
+                                        },
+                                    },
+                                },
+                            ],
                         },
                     },
                 ],
@@ -479,6 +485,110 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     );
 });
 
+const getLikedVideos = asyncHandler(async (req, res) => {
+    // const likedVideos = await Like.find({
+    //     video: { $ne: null },
+    //     likedBy: req?.user?._id,
+    // })
+    //     .populate("video")
+    //     .populate("owner", "username avatar fullName");
+
+    const likedVideos = await Like.aggregate([
+        {
+            $match: {
+                likedBy: new mongoose.Types.ObjectId(req.user._id),
+                video: { $ne: null },
+                isLiked: true,
+            },
+        },
+        {
+            $project: { 
+                video: 1,
+                _id: 0,
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "video",
+                foreignField: "_id",
+                as: "video",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as : "owner",
+                            pipeline : [
+                                {
+                                    $project : {
+                                        avatar : 1,
+                                        username : 1
+
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields : {
+                            owner : {
+                                $first : "$owner"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            $addFields: {
+                video: {
+                    $first: "$video",
+                }
+            }
+        },
+        {
+            $project: {
+              _id: "$video._id",
+              videoFile: "$video.videoFile",
+              thumbnail: "$video.thumbnail",
+              title: "$video.title",
+              description: "$video.description",
+              duration: "$video.duration",
+              views: "$video.views",
+              isPublished: "$video.isPublished",
+              owner: "$video.owner",
+              createdAt: "$video.createdAt",
+              updatedAt: "$video.updatedAt",
+              __v: "$video.__v"
+            }
+          }
+    ]);
+
+    if (!likedVideos) {
+        throw new ApiError(404, "No liked videos found");
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, likedVideos, "successfully fetched liked videos")
+    );
+});
+
+const getMyvideos = asyncHandler(async (req, res) => {
+    const videos = await Video.find({ owner: req.user?._id }).populate(
+        "owner",
+        "username avatar fullName"
+    );
+
+    if (!videos) {
+        throw new ApiError(404, "No videos found");
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, videos, "All Videos fetched successfully")
+    );
+});
 export {
     registerUser,
     userLogin,
@@ -491,4 +601,6 @@ export {
     updateCoverImage,
     getUserChannelProfile,
     getWatchHistory,
+    getLikedVideos,
+    getMyvideos,
 };

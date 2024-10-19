@@ -6,23 +6,45 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
+    let { isLiked } = req.body;
     //TODO: toggle like on video
+
+    console.log("entered toggle like" , isLiked);
+    
     if (!videoId) {
         throw new ApiError(400, "Video id is missing");
     }
+    // isLiked = isLiked === "true" ? true : false;
 
+    console.log("isLiked: ", isLiked);
+    
     const likePrev = await Like.find({ video: videoId, likedBy: req.user._id });
 
     let flag = false;
-    let like;
-    if (likePrev.length > 0) {
+    let like = {};
+    if (likePrev?.length > 0 && !(likePrev[0].isLiked ^ isLiked)) {
         flag = true;
-        like = await Like.findByIdAndDelete(likePrev[0]._id);
+
+        await Like.findByIdAndDelete(likePrev[0]._id);
+    } else if (likePrev?.length > 0 && likePrev[0].isLiked ^ isLiked) {
+        flag = false;
+
+        like = await Like.findByIdAndUpdate(
+            likePrev[0]._id,
+            {
+                isLiked,
+            },
+            {
+                new: true,
+            }
+        );
     } else {
         flag = false;
+
         like = await Like.create({
             video: videoId,
             likedBy: req.user._id,
+            isLiked,
         });
     }
 
@@ -39,7 +61,9 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
         new ApiResponse(
             200,
             like,
-            flag ? "Video disliked successfully" : "Video liked successfully"
+            flag
+                ? "Video deleted successfully"
+                : "Video liked / disliked successfully"
         )
     );
 });
@@ -159,31 +183,75 @@ const getLikeCount = asyncHandler(async (req, res) => {
     }
     const likeCount = await Like.aggregate([
         {
-            $match : {
-                $or : [
-                    {video : new mongoose.Types.ObjectId(id)},
-                    {comment : new mongoose.Types.ObjectId(id)},
-                    {tweet : new mongoose.Types.ObjectId(id)}
-                ]
-            }
+            $match: {
+                $or: [
+                    { video: new mongoose.Types.ObjectId(id) },
+                    { comment: new mongoose.Types.ObjectId(id) },
+                    { tweet: new mongoose.Types.ObjectId(id) },
+                ],
+                isLiked: true,
+            },
         },
         {
-            $count : "totalLikes"
+            $count: "likeCount",
         },
         {
-            $project : {
-                totalLikes : 1
-            }
-        }
+            $project: {
+                likeCount: 1,
+            },
+        },
     ]);
     console.log(likeCount);
-    
-    
 
     res.status(200).json(
-        new ApiResponse(200, likeCount[0] || {likeCount : 0}, "Like count fetched successfully")
+        new ApiResponse(
+            200,
+            likeCount[0] || { likeCount: 0 },
+            "Like count fetched successfully"
+        )
     );
+});
+const getDisLikeCount = asyncHandler(async (req, res) => {
+    const { id } = req.params;
 
-}
-)
-export { toggleCommentLike, toggleTweetLike, toggleVideoLike, getLikedVideos , getLikeCount };
+    if (!id) {
+        throw new ApiError(400, "Id is missing");
+    }
+    const disLikeCount = await Like.aggregate([
+        {
+            $match: {
+                $or: [
+                    { video: new mongoose.Types.ObjectId(id) },
+                    { comment: new mongoose.Types.ObjectId(id) },
+                    { tweet: new mongoose.Types.ObjectId(id) },
+                ],
+                isLiked: false,
+            },
+        },
+        {
+            $count: "disLikeCount",
+        },
+        {
+            $project: {
+                disLikeCount: 1,
+            },
+        },
+    ]);
+    console.log(disLikeCount);
+
+    res.status(200).json(
+        new ApiResponse(
+            200,
+            disLikeCount[0] || { disLikeCount: 0 },
+            "DisLikeLike count fetched successfully"
+        )
+    );
+});
+export {
+    toggleCommentLike,
+    toggleTweetLike,
+    toggleVideoLike,
+    getLikedVideos,
+    getLikeCount,
+    getDisLikeCount,
+};

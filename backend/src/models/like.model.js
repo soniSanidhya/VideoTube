@@ -17,6 +17,10 @@ const likeSchema = new Schema({
         type : Schema.Types.ObjectId,
         ref : "Video"
     },
+    isLiked : {
+        type : Boolean,
+        default : true
+    }
     
 },{
     timestamps : true

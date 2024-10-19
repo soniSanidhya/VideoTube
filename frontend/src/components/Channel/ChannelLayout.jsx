@@ -16,6 +16,7 @@ const ChannelLayout = () => {
       <ChannelDetails isChannel={channelAvilable} />
       <div class="px-4 pb-4">
       {isChannel && <Outlet context = {{username}} />}
+      
         </div>
     </section>
   );

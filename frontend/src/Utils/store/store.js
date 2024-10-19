@@ -3,6 +3,6 @@ import isLoginReducer from '../functionalties/isLoginSlice.js';
 
 export const store = configureStore({
     reducer : {
-        isLogin : isLoginReducer,
+        auth : isLoginReducer,
     },
 })
