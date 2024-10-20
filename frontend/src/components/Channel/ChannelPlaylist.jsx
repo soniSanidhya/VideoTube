@@ -1,36 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
-import { useOutletContext } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import viewsFormatter from '../../Utils/viewsFormatter';
 import timeFormatter from '../../Utils/timeformater';
-const fetchChannelPlaylist = async (username) => {
-  return axios.get(`/api/playlists/user/${username}`);
-}
+import { useSelector } from 'react-redux';
+import { useFetchPlaylists } from '../../Utils/sharedQuaries/sharedFetchPlaylists';
+import noVideos from '/noVideos.jpg';
+
 
 const ChannelPlaylist = () => {
-
-  const {username} = useOutletContext();
-
-  const {data , isloading, isError, error} = useQuery({
-    queryKey: ['channelPlaylist', username],
-    queryFn: () => fetchChannelPlaylist(username),
-    staleTime: 1000 * 60 * 5
-  })
-
+  const user = useSelector((state) => state.user.currentUser);
+  const {username } = useOutletContext() || {username : user.username}; 
+  
+  
+  console.log("username" , username);
+  
+  const {data , isloading, isError, error} = useFetchPlaylists(username);
 console.log("data" ,data?.data.data.userPlaylist);
+console.log("playlist" , data );
+useEffect(() => {
+  data?.data.data.userPlaylist.map((playlist) => {
+    console.log("playlist" , playlist.name);
+    
+  })
+})
 
 
     return (
 
       data?.data.data?.userPlaylist.length > 0  ? (
-        data.data.data.userPlaylist.map((playlist) => (
-          <div class="grid gap-4 pt-2 sm:grid-cols-[repeat(auto-fit,_minmax(400px,_1fr))]">
+        <div class="grid gap-4 pt-2 sm:grid-cols-[repeat(auto-fit,_minmax(400px,_1fr))]">
+
+        { data?.data.data.userPlaylist.map((playlist) => (
+
+          <Link to={`/videoList/playlist/${playlist._id}`} key={playlist._id}>
           <div class="w-full">
             <div class="relative mb-2 w-full pt-[56%]">
               <div class="absolute inset-0">
                 <img
-                  src={playlist.videos[0].thumbnail} alt="React Mastery"
+                  src={playlist.videos[0]?.thumbnail || noVideos } alt="React Mastery"
                   class="h-full w-full" />
                 <div class="absolute inset-x-0 bottom-0">
                   <div class="relative border-t bg-white/30 p-4 text-white backdrop-blur-sm before:absolute before:inset-0 before:bg-black/40">
@@ -46,11 +55,12 @@ console.log("data" ,data?.data.data.userPlaylist);
               </div>
             </div>
             <h6 class="mb-1 font-semibold">{playlist.name}</h6>
-            <p class="flex text-sm text-gray-200">{playlist.description}</p>
+            <p class="flex text-sm text-gray-200">{playlist.description || ""}</p>
           </div>      
-        </div>
+        </Link>
         )
-      )
+      )}
+        </div>
       ) : (
       <div class="flex justify-center p-4">
       <div class="w-full max-w-sm text-center">

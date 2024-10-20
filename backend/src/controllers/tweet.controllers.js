@@ -44,6 +44,8 @@ const getUserTweets = asyncHandler(async (req, res) => {
         owner: user._id,
     }).populate("owner", "username fullName avatar");
 
+    
+
     if (!tweets) {
         throw new ApiError(404, "tweet not found");
     }

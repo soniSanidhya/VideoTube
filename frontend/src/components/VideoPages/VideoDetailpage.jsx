@@ -13,6 +13,8 @@ import {
   useFetchComments,
   useFetchLikesAndDislikes,
 } from "../../Utils/sharedQuaries/sharedfetchcommentandLikes";
+import { useSelector } from "react-redux";
+import { useFetchPlaylists } from "../../Utils/sharedQuaries/sharedFetchPlaylists";
 
 const postlike = (videoId, p) =>
   axios.post(`/api/likes/toggle/${p}/${videoId}`);
@@ -20,13 +22,29 @@ const postlike = (videoId, p) =>
 const postLike = ({ id, isLiked }) =>
   axios.post(`/api/likes/toggle/v/${id}`, { isLiked });
 
-const postComment = (videoId, comment ) =>
-  axios.post(`/api/comments/${videoId}`, { content : comment });
+const postComment = (videoId, comment) =>
+  axios.post(`/api/comments/${videoId}`, { content: comment });
 
-const postSubcribe = (channelId) => axios.post(`/api/subscriptions/c/${channelId}`);
+const postSubcribe = (channelId) =>
+  axios.post(`/api/subscriptions/c/${channelId}`);
+
+const postToggleVideoinPlaylist = ({ playlistId, videoId }) =>
+  axios.patch(`/api/playlists/toggleVideo/${videoId}/${playlistId}`);
+
+const postCreatePlaylist = (playlistName) =>
+  axios.post(`/api/playlists`, { name: playlistName });
 const fetchVideo = (videoId) => axios.get(`/api/videos/v/${videoId}`);
 
+const patchWatchHistory = (videoId) => axios.patch(`/api/users/updateWatchHistory`, {videoId});
+
 const VideoDetailpage = () => {
+  const user = useSelector((state) => state.user.currentUser);
+  const isLogin = useSelector((state) => state.auth.isLogin);
+  const [playlistName, setPlaylistName] = useState("");
+  console.log("user", user);
+  console.log("isLogin", isLogin);
+  console.log("playlistName", playlistName);
+
   const [comment, setComment] = useState("");
   const { videoId } = useParams();
   const queryClient = useQueryClient();
@@ -40,6 +58,12 @@ const VideoDetailpage = () => {
     isError: isRelatedVideosError,
     error: errorRelatedVideos,
   } = useSharedVideoQuery();
+
+  const {
+    data: playlists,
+    isLoading: isPlaylistLoading,
+    isError: isPlaylistError,
+  } = useFetchPlaylists(user.username);
 
   const {
     data: videoData,
@@ -59,28 +83,52 @@ const VideoDetailpage = () => {
     isError: isCommentError,
   } = useFetchComments(videoId);
 
-  
+  const { mutate: postCreatePlaylistMutation } = useMutation({
+    mutationFn: (playlistName) => postCreatePlaylist(playlistName),
+    onSuccess: (newdata) => {
+      queryClient.invalidateQueries(["channelPlaylist", user.username]);
+      console.log("playlist created");
+    },
+  });
 
-  const {mutate: postCommentMutation} = useMutation({
+  const { mutate: postToggleVideoinPlaylistMutation } = useMutation({
+    mutationFn: ({ playlistId, videoId }) =>
+      postToggleVideoinPlaylist({ playlistId, videoId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["channelPlaylist", user.username]);
+      console.log("video added to playlist");
+    },
+  });
+
+  const { mutate: postCommentMutation } = useMutation({
     mutationFn: (comment) => postComment(videoId, comment),
     onSuccess: (newdata) => {
-     queryClient.invalidateQueries(["comments", videoId]);
+      queryClient.invalidateQueries(["comments", videoId]);
     },
-  })   
+  });
 
-  const {mutate : postSubcribeMutation} = useMutation({
-    mutationFn : (channelId) => postSubcribe(channelId),
-    onSuccess : () => {
-      queryClient.invalidateQueries(["channel", videoData?.data.data.owner.username]);
+  const { mutate: postSubcribeMutation } = useMutation({
+    mutationFn: (channelId) => postSubcribe(channelId),
+    onSuccess: () => {
+      queryClient.invalidateQueries([
+        "channel",
+        videoData?.data.data.owner.username,
+      ]);
       console.log("subscribed");
+    },
+  });
+
+  const {mutate : patchWatchHistoryMutation} = useMutation({
+    mutationFn: (videoId) => patchWatchHistory(videoId),
+    onSuccess: () => {
+      console.log("watch history updated");
     }
-  })
-       
-    
+  });
+
   console.log("like data", Likedata);
   console.log("comment data", commentData);
   console.log("video data", videoData);
-  console.log("comment posted" , commentData);
+  console.log("comment posted", commentData);
   const { mutate: toggleLikeMutaion } = useMutation({
     mutationFn: ({ id, isLiked }) => postLike({ id, isLiked }),
     onSuccess: () => {
@@ -95,6 +143,11 @@ const VideoDetailpage = () => {
     error: channelError,
   } = usesharedFetchChannelDetails(videoData?.data.data.owner.username);
 
+
+  useEffect(() => {
+    patchWatchHistoryMutation(videoId);
+  } , [videoId]);
+
   const isLoading =
     isVideoLoading ||
     isRelatedVideosLoading ||
@@ -106,12 +159,20 @@ const VideoDetailpage = () => {
     isCommentError ||
     isChannelError ||
     isLikeError;
+
+  const handlePlaylistChange = (e) => {
+    console.log("playlistId", e.target.value);
+
+    postToggleVideoinPlaylistMutation({ playlistId: e.target.value, videoId });
+  };
+  console.log("playlistName", playlistName);
+
   const error = errorRelatedVideos || channelError;
   if (isLoading) {
     return <div className="text-center">Loading...</div>;
   }
   if (isError) {
-    return <div>Error: {error.message}</div>;
+    return <div>Error: {error?.message}</div>;
   }
 
   return (
@@ -209,7 +270,10 @@ const VideoDetailpage = () => {
                       </button>
                     </div>
                     <div class="relative block">
-                      <button class="peer flex items-center gap-x-2 rounded-lg bg-white px-4 py-1.5 text-black">
+                      <button
+                        class="peer flex items-center gap-x-2 rounded-lg bg-white px-4 py-1.5 text-black"
+                        disabled={!isLogin}
+                      >
                         <span class="inline-block w-5">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -233,180 +297,41 @@ const VideoDetailpage = () => {
                           Save to playlist
                         </h3>
                         <ul class="mb-4">
-                          <li class="mb-2 last:mb-0">
-                            <label
-                              class="group/label inline-flex cursor-pointer items-center gap-x-3"
-                              for="Collections-checkbox"
-                            >
-                              <input
-                                type="checkbox"
-                                class="peer hidden"
-                                id="Collections-checkbox"
-                              />
-                              <span class="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="3"
-                                  stroke="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.5 12.75l6 6 9-13.5"
-                                  ></path>
-                                </svg>
-                              </span>
-                              Collections
-                            </label>
-                          </li>
-                          <li class="mb-2 last:mb-0">
-                            <label
-                              class="group/label inline-flex cursor-pointer items-center gap-x-3"
-                              for="JavaScript Basics-checkbox"
-                            >
-                              <input
-                                type="checkbox"
-                                class="peer hidden"
-                                id="JavaScript Basics-checkbox"
-                              />
-                              <span class="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="3"
-                                  stroke="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.5 12.75l6 6 9-13.5"
-                                  ></path>
-                                </svg>
-                              </span>
-                              JavaScript Basics
-                            </label>
-                          </li>
-                          <li class="mb-2 last:mb-0">
-                            <label
-                              class="group/label inline-flex cursor-pointer items-center gap-x-3"
-                              for="C++ Tuts-checkbox"
-                            >
-                              <input
-                                type="checkbox"
-                                class="peer hidden"
-                                id="C++ Tuts-checkbox"
-                              />
-                              <span class="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="3"
-                                  stroke="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.5 12.75l6 6 9-13.5"
-                                  ></path>
-                                </svg>
-                              </span>
-                              C++ Tuts
-                            </label>
-                          </li>
-                          <li class="mb-2 last:mb-0">
-                            <label
-                              class="group/label inline-flex cursor-pointer items-center gap-x-3"
-                              for="Feel Good Music-checkbox"
-                            >
-                              <input
-                                type="checkbox"
-                                class="peer hidden"
-                                id="Feel Good Music-checkbox"
-                              />
-                              <span class="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="3"
-                                  stroke="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.5 12.75l6 6 9-13.5"
-                                  ></path>
-                                </svg>
-                              </span>
-                              Feel Good Music
-                            </label>
-                          </li>
-                          <li class="mb-2 last:mb-0">
-                            <label
-                              class="group/label inline-flex cursor-pointer items-center gap-x-3"
-                              for="Ed Sheeran-checkbox"
-                            >
-                              <input
-                                type="checkbox"
-                                class="peer hidden"
-                                id="Ed Sheeran-checkbox"
-                              />
-                              <span class="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="3"
-                                  stroke="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.5 12.75l6 6 9-13.5"
-                                  ></path>
-                                </svg>
-                              </span>
-                              Ed Sheeran
-                            </label>
-                          </li>
-                          <li class="mb-2 last:mb-0">
-                            <label
-                              class="group/label inline-flex cursor-pointer items-center gap-x-3"
-                              for="Python-checkbox"
-                            >
-                              <input
-                                type="checkbox"
-                                class="peer hidden"
-                                id="Python-checkbox"
-                              />
-                              <span class="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke-width="3"
-                                  stroke="currentColor"
-                                  aria-hidden="true"
-                                >
-                                  <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.5 12.75l6 6 9-13.5"
-                                  ></path>
-                                </svg>
-                              </span>
-                              Python
-                            </label>
-                          </li>
+                          {playlists?.data.data.userPlaylist.map((playlist) => (
+                            <li class="mb-2 last:mb-0" key={playlist._id}>
+                              <label
+                                class="group/label inline-flex cursor-pointer items-center gap-x-3"
+                                htmlFor={playlist._id}
+                              >
+                                <input
+                                  type="checkbox"
+                                  class="peer hidden"
+                                  id={playlist._id}
+                                  value={playlist._id}
+                                  onClick={(e) => {
+                                    handlePlaylistChange(e);
+                                  }}
+                                />
+                                <span class="inline-flex h-4 w-4 items-center justify-center rounded-[4px] border border-transparent bg-white text-white group-hover/label:border-[#ae7aff] peer-checked:border-[#ae7aff] peer-checked:text-[#ae7aff]">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke-width="3"
+                                    stroke="currentColor"
+                                    aria-hidden="true"
+                                  >
+                                    <path
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M4.5 12.75l6 6 9-13.5"
+                                    ></path>
+                                  </svg>
+                                </span>
+                                {playlist.name}
+                              </label>
+                            </li>
+                          ))}
                         </ul>
                         <div class="flex flex-col">
                           <label
@@ -419,8 +344,16 @@ const VideoDetailpage = () => {
                             class="w-full rounded-lg border border-transparent bg-white px-3 py-2 text-black outline-none focus:border-[#ae7aff]"
                             id="playlist-name"
                             placeholder="Enter playlist name"
+                            onChange={(e) => {
+                              setPlaylistName(e.target.value);
+                            }}
                           />
-                          <button class="mx-auto mt-4 rounded-lg bg-[#ae7aff] px-4 py-2 text-black">
+                          <button
+                            onClick={() => {
+                              postCreatePlaylistMutation(playlistName);
+                            }}
+                            class="mx-auto mt-4 rounded-lg bg-[#ae7aff] px-4 py-2 text-black"
+                          >
                             Create new playlist
                           </button>
                         </div>
@@ -450,7 +383,12 @@ const VideoDetailpage = () => {
                     </div>
                   </div>
                   <div class="block">
-                    <button onClick={()=>{postSubcribeMutation(channel.data.data._id)}} class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
+                    <button
+                      onClick={() => {
+                        postSubcribeMutation(channel.data.data._id);
+                      }}
+                      class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
+                    >
                       <span class="inline-block w-5">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -497,7 +435,12 @@ const VideoDetailpage = () => {
                     placeholder="Add a Comment"
                     onChange={(e) => setComment(e.target.value)}
                   />
-                  <button onClick={()=>{ comment.trim().length >0 && postCommentMutation(comment)}} class=" rounded-lg bg-[#ae7aff] px-4 py-1 text-black hover:bg-[#7a50bc]  ">
+                  <button
+                    onClick={() => {
+                      comment.trim().length > 0 && postCommentMutation(comment);
+                    }}
+                    class=" rounded-lg bg-[#ae7aff] px-4 py-1 text-black hover:bg-[#7a50bc]  "
+                  >
                     Send
                   </button>
                 </div>

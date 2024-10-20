@@ -13,7 +13,7 @@ const logOutUser = () => {
 const Header = () => {
   const dispatch = useDispatch();
   const isLogin = useSelector((state) => state.auth.isLogin);
-  const {data} = useGetCurrentUser(isLogin);  
+  const { data } = useGetCurrentUser(isLogin);
   const { mutate } = useMutation({
     mutationKey: "logout",
     mutationFn: logOutUser,
@@ -303,28 +303,32 @@ const Header = () => {
             </li>
           </ul>
           {isLogin ? (
-            // <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
-            //   <button onClick={handleLogout} className="mr-1 w-full bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
-            //     Log Out
-            //   </button>
-            // </div>
-            <Link to={`/channel/c/${data?.data.data.username}`}>
-              
-            <div class="mb-8 mt-auto px-4 sm:mb-0 sm:mt-0 sm:px-0">
-              <button class="flex w-full gap-4 text-left sm:items-center">
-                <img
-                // data?.data.data.avatar
-                  src={data?.data.data.avatar}
-                  alt="React-Patterns"
-                  class="h-16 w-16 shrink-0 rounded-full sm:h-12 sm:w-12"
-                />
-                <div class="w-full pt-2 sm:hidden">
-                  <h6 class="font-semibold">React Patterns</h6>
-                  <p class="text-sm text-gray-300">@reactpatterns</p>
+            <>
+              <Link to={`/channel/c/${data?.data.data.username}`}>
+                <div class="mb-8 mt-auto px-4 sm:mb-0 sm:mt-0 sm:px-0">
+                  <button class="flex w-full gap-4 text-left sm:items-center">
+                    <img
+                      // data?.data.data.avatar
+                      src={data?.data.data.avatar}
+                      alt="React-Patterns"
+                      class="h-16 w-16 shrink-0 rounded-full sm:h-12 sm:w-12"
+                    />
+                    <div class="w-full pt-2 sm:hidden">
+                      <h6 class="font-semibold">React Patterns</h6>
+                      <p class="text-sm text-gray-300">@reactpatterns</p>
+                    </div>
+                  </button>
                 </div>
-              </button>
-            </div>
-            </Link>
+              </Link>
+              <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
+                <button
+                  onClick={handleLogout}
+                  className="mr-1 w-full bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
+                >
+                  Log Out
+                </button>
+              </div>
+            </>
           ) : (
             <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
               <Link to="/login">

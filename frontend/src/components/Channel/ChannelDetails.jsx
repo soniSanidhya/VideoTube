@@ -11,6 +11,7 @@ const ChannelDetails = ({ isChannel }) => {
   const { username } = useParams();
   console.log(username);
   const [isMyChannel, setIsMyChannel] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const { data: user } = useGetCurrentUser(isLogin);
 
   useEffect(() => {
@@ -63,7 +64,9 @@ const ChannelDetails = ({ isChannel }) => {
           </div>
           {isMyChannel ? (
             <div class="inline-block">
-              <button class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
+              <button
+                onClick={() => setIsEdit(!isEdit)}
+              class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
                 <span class="inline-block w-5">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +83,7 @@ const ChannelDetails = ({ isChannel }) => {
                     ></path>
                   </svg>
                 </span>
-                Edit
+                { isEdit ? "View Channel" : "Edit"}
               </button>
             </div>
           ) : (
@@ -110,48 +113,75 @@ const ChannelDetails = ({ isChannel }) => {
             </div>
           )}
         </div>
-        <ul class="no-scrollbar sticky top-[66px] z-[2] flex flex-row gap-x-2 overflow-auto border-b-2 border-gray-400 bg-[#121212] py-2 sm:top-[82px]">
-          <li class="w-full">
-            <NavLink
-              to={`/channel/c/${username}/videos`}
-              className={({ isActive }) => (isActive ? " bg-white" : "")}
-            >
+        {isEdit ?  (
+          <ul class="no-scrollbar sticky top-[66px] z-[2] flex flex-row gap-x-2 overflow-auto border-b-2 border-gray-400 bg-[#121212] py-2 sm:top-[82px]">
+            <li class="w-full">
+              <NavLink to={`edit-channel-info`} className={({ isActive }) => (isActive ? " bg-white" : "")}>
               <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
-                Videos
+                Personal Information
               </button>
-            </NavLink>
-          </li>
-          <li class="w-full">
-            <NavLink
-              to={`/channel/c/${username}/playlists`}
-              className={({ isActive }) => (isActive ? " bg-white" : "")}
-            >
+              </NavLink>
+            </li>
+            <li class="w-full">
+              <NavLink to={`edit-personal-info`} className={({ isActive }) => (isActive ? " bg-white" : "")}>
               <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
-                Playlist
+                Channel Information
               </button>
-            </NavLink>
-          </li>
-          <li class="w-full">
-            <NavLink
-              to={`/channel/c/${username}/tweets`}
-              className={({ isActive }) => (isActive ? " bg-white" : "")}
-            >
+              </NavLink>
+            </li>
+            <li class="w-full">
+              <NavLink to={`change-password`} className={({ isActive }) => (isActive ? " bg-white" : "")} >
               <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
-                Tweets
+                Change Password
               </button>
-            </NavLink>
-          </li>
-          <li class="w-full">
-            <NavLink
-              to={`/channel/c/${username}/subscribed`}
-              className={({ isActive }) => (isActive ? " bg-white" : "")}
-            >
-              <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
-                Subscribed
-              </button>
-            </NavLink>
-          </li>
-        </ul>
+              </NavLink>
+            </li>
+          </ul>
+        ) : 
+        (
+          <ul class="no-scrollbar sticky top-[66px] z-[2] flex flex-row gap-x-2 overflow-auto border-b-2 border-gray-400 bg-[#121212] py-2 sm:top-[82px]">
+            <li class="w-full">
+              <NavLink
+                to={`/channel/c/${username}/videos`}
+                className={({ isActive }) => (isActive ? " bg-white" : "")}
+              >
+                <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                  Videos
+                </button>
+              </NavLink>
+            </li>
+            <li class="w-full">
+              <NavLink
+                to={`/channel/c/${username}/playlists`}
+                className={({ isActive }) => (isActive ? " bg-white" : "")}
+              >
+                <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                  Playlist
+                </button>
+              </NavLink>
+            </li>
+            <li class="w-full">
+              <NavLink
+                to={`/channel/c/${username}/tweets`}
+                className={({ isActive }) => (isActive ? " bg-white" : "")}
+              >
+                <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                  Tweets
+                </button>
+              </NavLink>
+            </li>
+            <li class="w-full">
+              <NavLink
+                to={`/channel/c/${username}/subscribed`}
+                className={({ isActive }) => (isActive ? " bg-white" : "")}
+              >
+                <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                  Subscribed
+                </button>
+              </NavLink>
+            </li>
+          </ul>
+        )}
       </div>
     </section>
   ) : (

@@ -399,7 +399,9 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 },
                 isSubscribed: {
                     $cond: {
-                        if: userId ? { $in: [userId, "$subscriber.subscriber"] } : false,
+                        if: userId
+                            ? { $in: [userId, "$subscriber.subscriber"] }
+                            : false,
                         then: true,
                         else: false,
                     },
@@ -438,50 +440,153 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
-    const user = await User.aggregate([
+    // const user = await User.aggregate([
+        // {
+        //     $match: {
+        //         _id: new mongoose.Types.ObjectId(req.user._id),
+        //     },
+        // },
+        // {
+        //     $lookup: {
+        //         from: "videos",
+        //         localField: "wathchHistory",
+        //         foreignField: "_id",
+        //         as: "watchHistory",
+        //         pipeline: [
+        //             {
+        //                 $lookup: {
+        //                     from: "users",
+        //                     localField: "owner",
+        //                     foreignField: "_id",
+        //                     as: "owner",
+        //                     pipeline: [
+        //                         {
+        //                             $project: {
+        //                                 fullName: 1,
+        //                                 avatar: 1,
+        //                                 username: 1,
+        //                             },
+        //                         },
+        //                         {
+        //                             $addFields: {
+        //                                 owner: {
+        //                                     $first: "$owner",
+        //                                 },
+        //                             },
+        //                         },
+        //                     ],
+        //                 },
+        //             },
+        //         ],
+        //     },
+        // },
+    // ]);
+
+    // console.log(req.user._id);
+    
+    const user = await User.findById(req.user._id).populate({
+        path: "watchHistory",
+        populate: {
+            path: "owner",
+            select: "username fullName avatar",
+        }
+    });
+    console.log(user);
+    
+    const userObject = user.toObject();
+
+    const userHistory = await User.aggregate([
         {
-            $match: {
-                _id: new mongoose.Types.ObjectId(req.user._id),
-            },
+            $replaceRoot: { newRoot: userObject }
         },
         {
-            $lookup: {
-                from: "videos",
-                localField: "wathchHistory",
-                foreignField: "_id",
-                as: "watchHistory",
-                pipeline: [
-                    {
-                        $lookup: {
-                            from: "users",
-                            localField: "owner",
-                            foreignField: "_id",
-                            as: "owner",
-                            pipeline: [
-                                {
-                                    $project: {
-                                        fullName: 1,
-                                        avatar: 1,
-                                        username: 1,
-                                    },
-                                },
-                                {
-                                    $addFields: {
-                                        owner: {
-                                            $first: "$owner",
-                                        },
-                                    },
-                                },
-                            ],
-                        },
-                    },
-                ],
+            $project: {
+                watchHistory: 1,
+                _id : 0
+            }
+        },
+        {
+            $unwind: "$watchHistory"
+        },
+        {
+            $project: {
+                _id: "$watchHistory._id",
+                videoFile: "$watchHistory.videoFile",
+                thumbnail: "$watchHistory.thumbnail",
+                title: "$watchHistory.title",
+                description: "$watchHistory.description",
+                duration: "$watchHistory.duration",
+                views: "$watchHistory.views",
+                isPublished: "$watchHistory.isPublished",
+                owner: "$watchHistory.owner",
+                createdAt: "$watchHistory.createdAt",
+                updatedAt: "$watchHistory.updatedAt",
+                __v: "$watchHistory.__v",
             },
         },
-    ]);
+    ])
+
+    // const user = await User.aggregate([
+    //     {
+    //         $match: {
+    //             _id: new mongoose.Types.ObjectId(req.user._id),
+    //         }
+    //     },
+    //     {
+    //         $lookup: {
+    //             from: "videos",
+    //             localField: "watchHistory",
+    //             foreignField: "_id",
+    //             as: "watchHistory",
+    //             pipeline: [
+    //                 {
+    //                     $lookup: {
+    //                         from: "users",
+    //                         localField: "owner",
+    //                         foreignField: "_id",
+    //                         as: "owner",
+    //                         pipeline: [
+    //                             {
+    //                                 $project: {
+    //                                     avatar: 1,
+    //                                     username: 1,
+    //                                 },
+    //                             },
+    //                         ],
+    //                     },
+    //                 },
+    //                 {
+    //                     $addFields: {
+    //                         owner: {
+    //                             $first: "$owner",
+    //                         },
+    //                     },
+    //                 },
+    //             ],
+    //         },
+    //     },
+    //     // {
+    //     //     $addFields: {
+    //     //         watchHistory: {
+    //     //             $first: "$watchHistory",
+    //     //         },
+    //     //     },
+    //     // },
+    //     {
+    //         $project: {
+    //             watchHistory: 1,
+    //             _id: 0,
+    //         }
+    //     },
+    //     {
+    //         $unwind: "$watchHistory",
+    //     },
+        
+       
+    // ])
 
     res.status(200).json(
-        new ApiResponse(200, user[0].watchHistory, "Watch History Fetched")
+        new ApiResponse(200,  userHistory , "Watch History Fetched")
     );
 });
 
@@ -502,10 +607,10 @@ const getLikedVideos = asyncHandler(async (req, res) => {
             },
         },
         {
-            $project: { 
+            $project: {
                 video: 1,
                 _id: 0,
-            }
+            },
         },
         {
             $lookup: {
@@ -519,51 +624,50 @@ const getLikedVideos = asyncHandler(async (req, res) => {
                             from: "users",
                             localField: "owner",
                             foreignField: "_id",
-                            as : "owner",
-                            pipeline : [
+                            as: "owner",
+                            pipeline: [
                                 {
-                                    $project : {
-                                        avatar : 1,
-                                        username : 1
-
-                                    }
-                                }
-                            ]
-                        }
+                                    $project: {
+                                        avatar: 1,
+                                        username: 1,
+                                    },
+                                },
+                            ],
+                        },
                     },
                     {
-                        $addFields : {
-                            owner : {
-                                $first : "$owner"
-                            }
-                        }
-                    }
-                ]
-            }
+                        $addFields: {
+                            owner: {
+                                $first: "$owner",
+                            },
+                        },
+                    },
+                ],
+            },
         },
         {
             $addFields: {
                 video: {
                     $first: "$video",
-                }
-            }
+                },
+            },
         },
         {
             $project: {
-              _id: "$video._id",
-              videoFile: "$video.videoFile",
-              thumbnail: "$video.thumbnail",
-              title: "$video.title",
-              description: "$video.description",
-              duration: "$video.duration",
-              views: "$video.views",
-              isPublished: "$video.isPublished",
-              owner: "$video.owner",
-              createdAt: "$video.createdAt",
-              updatedAt: "$video.updatedAt",
-              __v: "$video.__v"
-            }
-          }
+                _id: "$video._id",
+                videoFile: "$video.videoFile",
+                thumbnail: "$video.thumbnail",
+                title: "$video.title",
+                description: "$video.description",
+                duration: "$video.duration",
+                views: "$video.views",
+                isPublished: "$video.isPublished",
+                owner: "$video.owner",
+                createdAt: "$video.createdAt",
+                updatedAt: "$video.updatedAt",
+                __v: "$video.__v",
+            },
+        },
     ]);
 
     if (!likedVideos) {
@@ -589,6 +693,35 @@ const getMyvideos = asyncHandler(async (req, res) => {
         new ApiResponse(200, videos, "All Videos fetched successfully")
     );
 });
+
+const updateWatchHistory = asyncHandler(async (req, res) => {
+    const { videoId } = req.body;
+
+    if (!videoId) {
+        throw new ApiError(400, "videoId is required");
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                watchHistory: [...req.user.watchHistory, videoId],
+            },
+        },
+        { new: true }
+    );
+
+    console.log(videoId);
+
+    if (!user) {
+        throw new ApiError(500, "Something went wrong while updating watch history");
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, user , "Watch History updated")
+    );
+});
+
 export {
     registerUser,
     userLogin,
@@ -603,4 +736,5 @@ export {
     getWatchHistory,
     getLikedVideos,
     getMyvideos,
+    updateWatchHistory,
 };

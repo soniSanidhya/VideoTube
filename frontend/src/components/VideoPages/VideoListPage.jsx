@@ -7,20 +7,27 @@ import { RiLoginCircleLine } from "react-icons/ri";
 import durationFormatter from "../../Utils/durationFormatter";
 import viewsFormatter from "../../Utils/viewsFormatter";
 import timeFormatter from "../../Utils/timeformater";
-const fetchVideoList = (v) => {
+const fetchVideoList = (v , id) => {
+  if(v == 'playlist'){
+    return axios.get(`/api/playlists/${id}`);
+  }
   return axios.get(`/api/users/${v}`);
 };
 
 const VideoListPage = () => {
   const { v } = useParams();
-
+  const { id } = useParams() || null;
   const isLogin = useSelector((state) => state.auth.isLogin);
+  console.log("v", v);
+  console.log("id", id);
+  
 
+  
   console.log("isLogin", isLogin);
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["videoList", v ?? "all"],
-    queryFn: () => fetchVideoList(v),
+    queryFn: () => fetchVideoList(v , id),
     staleTime: 1000 * 60 * 1,
     enabled: isLogin,
   });
@@ -96,7 +103,7 @@ const VideoListPage = () => {
                   <div class="flex items-center gap-x-4">
                     <div class="mt-2 hidden h-10 w-10 shrink-0 md:block">
                       <img
-                       src={video.owner.avatar}alt={video.owner.username}
+                       src={video?.owner.avatar}alt={video?.owner.username}
                         class="h-full w-full rounded-full"
                       />
                     </div>

@@ -16,7 +16,14 @@ const ChannelVideos = () => {
   const { username } = useParams();
   const isLogin = useSelector((state) => state.auth.isLogin);
   const [isMyChannel, setIsMyChannel] = useState(false);
+  const [newVideo, setNewVideo] = useState(false);
   const { data: user } = useGetCurrentUser(isLogin);
+
+
+  const uploaded = () => {
+   
+    setNewVideo(false);
+  }
 
   useEffect(() => {
     if (user) {
@@ -39,10 +46,32 @@ const ChannelVideos = () => {
   if (isError) {
     return <div>Error: {error.message}</div>;
   }
-
+  // console.log(newVideo);
+  
   return (data.data.data.length > 0 ? (
-    <>
+    <>{isMyChannel && (
+          <button
+          onClick={()=>{setNewVideo(true)}} class="mt-4 inline-flex items-center gap-x-2 bg-[#ae7aff] px-3 py-2 font-semibold text-black">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              aria-hidden="true"
+              class="h-5 w-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m7.5-7.5h-15"
+              ></path>
+            </svg>
+            New video
+          </button>
+        )}
     <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4 pt-2">
+    
       {data.data.data.map((video) => (
         <Link to={`/watch/${video._id}`} key={video._id}>
           <div class="w-full">
@@ -67,7 +96,7 @@ const ChannelVideos = () => {
         </Link>
       ))}
     </div>
-    <VideoModelPopUp/>
+    {newVideo && <VideoModelPopUp uploaded = {{uploaded}}/>}
     </>
   ) : (<>
     <div class="flex justify-center p-4">
@@ -97,7 +126,7 @@ const ChannelVideos = () => {
           find more videos.
         </p>
         {isMyChannel && (
-          <button class="mt-4 inline-flex items-center gap-x-2 bg-[#ae7aff] px-3 py-2 font-semibold text-black">
+          <button onClick={()=>{setNewVideo(true)}} class="mt-4 inline-flex items-center gap-x-2 bg-[#ae7aff] px-3 py-2 font-semibold text-black">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -118,7 +147,8 @@ const ChannelVideos = () => {
         )}
       </div>
     </div>
-    <VideoModelPopUp/>
+    {newVideo && <VideoModelPopUp uploaded = {uploaded} />}
+
     </>
   )
   
