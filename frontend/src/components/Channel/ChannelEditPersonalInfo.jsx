@@ -17,7 +17,7 @@ const ChannelEditPersonalInfo = () => {
 
   console.log(firstName , lastName , email);
   const queryClient = useQueryClient();
-  const {mutate} = useMutation(
+  const {mutate , isError , error} = useMutation(
     {
       mutationFn  : ({fullName , email}) => updatePersonalDetails({fullName , email}),
       onSuccess : (data) => {
@@ -25,6 +25,13 @@ const ChannelEditPersonalInfo = () => {
         console.log(data);}
     }
   )
+
+  const notify = (error) => toast(error);
+
+  if (isError) {
+      notify(error.response.data.message);
+  }
+
     return (
         <div class="flex flex-wrap justify-center gap-y-4 py-4">
         <div class="w-full sm:w-1/2 lg:w-1/3">

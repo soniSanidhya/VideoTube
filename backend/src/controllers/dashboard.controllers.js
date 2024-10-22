@@ -10,7 +10,8 @@ import { User } from "../models/user.models.js";
 const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
     const { channelId } = req.params;
-
+    console.log("dashBoard");
+    
     if (!channelId) {
         throw new ApiError(400, "Channel id is missing");
     }
@@ -85,7 +86,85 @@ const getChannelVideos = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Channel not found");
     }
 
-    const videos = await Video.find({ owner: channelId }).populate("owner");
+    // const videos = await Video.find({ owner: channelId }).populate("owner" , "username fullName avatar");
+
+    const videos = await Video.aggregate([
+        {
+            $match: { owner: new mongoose.Types.ObjectId(channelId) },
+        },
+        {
+            $lookup : {
+                from : "likes",
+                let: { videoId: '$_id' },
+                pipeline : [{
+                    $match : {
+                        $expr : {
+                           $and : [
+                            { $eq : ["$video" , "$$videoId"]},
+                            { $eq : ["$isLiked" , true]}
+
+                           ]
+                        }
+                    }
+                }],
+
+                as : "likes"
+            }
+        },
+        {
+            $lookup : {
+                from : "likes",
+                let: { videoId: '$_id' },
+                pipeline : [{
+                    $match : {
+                        $expr : {
+                           $and : [
+                            { $eq : ["$video" , "$$videoId"]},
+                            { $eq : ["$isLiked" , false]}
+
+                           ]
+                        }
+                    }
+                }],
+
+                as : "disLikes"
+            }
+        },
+        {
+            $addFields : {
+                likes : { $size : "$likes" },
+                disLikes : { $size : "$disLikes" }
+            }
+        }
+        // {
+        //     $lookup : {
+        //         from : "likes",
+        //         let: { videoId: '$_id' },
+        //         pipeline : [{
+        //             $match : {
+        //                 $expr : {
+        //                     $and : [
+        //                         { 
+        //                             $eq : ["$video" , "$videoId"] ,
+        //                             $eq : ["$isLiked" , false]
+        //                         }
+        //                     ]
+        //                 }
+        //             }
+        //         }],
+
+        //         as : "dislikes"
+        //     }
+        // },
+        // {
+        //     $addFields : {
+        //         likes : { $size : "$likes" },
+        //         dislikes : { $size : "$dislikes" }
+        //     }
+        // },
+        
+        
+    ])
 
     if (videos?.length < 0) {
         throw new ApiError(404, "No videos found for this channel");

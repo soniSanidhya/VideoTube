@@ -203,16 +203,21 @@ const VideoModelPopUp = (uploaded) => {
             </div>
           </div>
           <div class="grid grid-cols-2 gap-4">
-            <button onClick={()=>{ uploaded.uploaded.uploaded();}} class="border px-4 py-3">Cancel</button>
-            <button onClick={()=>{ uploaded.uploaded.uploaded();}} class="bg-[#ae7aff] px-4 py-3 text-black disabled:bg-[#E4D3FF]">Finish</button>
+            <button onClick={()=>{   uploaded.uploaded();}} class="border px-4 py-3">Cancel</button>
+            <button onClick={()=>{  uploaded.uploaded();}} class="bg-[#ae7aff] px-4 py-3 text-black disabled:bg-[#E4D3FF]">Finish</button>
           </div>
         </div>
       </div>
       }
 
     return (
-        <div class="absolute inset-0 md:left-60 md:top-30  z-10 bg-black/50 px-4 pb-[86px] pt-4 sm:px-14 sm:py-8 top-20">
-        <div class="h-[80%]  overflow-auto border bg-[#121212]">
+        <div onClick={(e)=>{
+          console.log("newvideo false");
+          
+          e.stopPropagation() ;
+          uploaded.uploaded();
+        }}   class="absolute inset-0 md:left-60 md:top-30  z-10 bg-black/50 px-4 pb-[86px] pt-4 sm:px-14 sm:py-8 top-20">
+        <div onClick={(e) => {e.stopPropagation()}} class="h-[80%]  overflow-auto border bg-[#121212]">
             <form onSubmit={handleSubmit} >
           <div class="flex items-center justify-between border-b p-4">
             <h2 class="text-xl font-semibold">Upload Videos</h2>

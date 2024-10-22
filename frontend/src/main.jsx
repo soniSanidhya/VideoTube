@@ -26,6 +26,8 @@ import VideoListPage from "./components/VideoPages/VideoListPage.jsx";
 import ChannelEditPersonalInfo from "./components/Channel/channelEditPersonalInfo.jsx";
 import ChannelChangePassword from "./components/Channel/channelChangePassword.jsx";
 import ChannelEditChannelInfo from "./components/Channel/channelEditChannelInfo.jsx";
+import SubscribedTo from "./components/SubscribedTo/SubscribedTo.jsx";
+import Dashboard from "./components/Dashboard/Dashboard.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(<>
     <Route path="/" element={<Layout />}>
@@ -44,6 +46,8 @@ const router = createBrowserRouter(
       <Route path="*" element={<div>404</div>} />
       <Route path="videoList/:v/:id?" element={<VideoListPage/>} />
       <Route path="myCollection" element={<ChannelPlaylist/>} />
+      <Route path="subscribed-To" element={<SubscribedTo/>} /> 
+      <Route path="dashboard" element ={ <Dashboard/> } />
     </Route>
       <Route path="login" element={<Login/>} ></Route>
   </>

@@ -12,11 +12,12 @@ const fetchDisLikes = (videoId) => (
 const fetchComments = (videoId) => (
   axios.get(`/api/comments/${videoId}`)
 )
-const useFetchLikesAndDislikes = (videoId)=>{
-  const {data : like , isError : isErrorinLike} = useQuery({
+const useFetchLikesAndDislikes = (videoId , enabled = false)=>{
+  const {data : like , isError : isErrorinLike , refetch} = useQuery({
     queryKey : ["likes" , videoId],
     queryFn : ()=>fetchLikes(videoId),
-    staleTime : 1000 * 60 * 2
+    staleTime : 1000 * 60 * 2,
+    enabled
   });
 
   const {data : dislikes , isError : isErrorinDisLikes} = useQuery({
@@ -31,7 +32,7 @@ const useFetchLikesAndDislikes = (videoId)=>{
   }
   const isError = isErrorinLike || isErrorinDisLikes;
 
-  return {data , isError};
+  return {data , isError , refetch};
 }
 
 const useFetchComments = (videoId)=>{

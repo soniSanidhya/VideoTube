@@ -16,8 +16,8 @@ const ChannelVideos = () => {
   const { username } = useParams();
   const isLogin = useSelector((state) => state.auth.isLogin);
   const [isMyChannel, setIsMyChannel] = useState(false);
-  const [newVideo, setNewVideo] = useState(false);
   const { data: user } = useGetCurrentUser(isLogin);
+  const [newVideo, setNewVideo] = useState(false);
 
 
   const uploaded = () => {

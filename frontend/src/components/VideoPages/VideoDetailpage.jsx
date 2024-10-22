@@ -15,6 +15,7 @@ import {
 } from "../../Utils/sharedQuaries/sharedfetchcommentandLikes";
 import { useSelector } from "react-redux";
 import { useFetchPlaylists } from "../../Utils/sharedQuaries/sharedFetchPlaylists";
+import { toast } from "react-toastify";
 
 const postlike = (videoId, p) =>
   axios.post(`/api/likes/toggle/${p}/${videoId}`);
@@ -33,6 +34,9 @@ const postToggleVideoinPlaylist = ({ playlistId, videoId }) =>
 
 const postCreatePlaylist = (playlistName) =>
   axios.post(`/api/playlists`, { name: playlistName });
+
+const patchVideoViews = (videoId) => axios.patch(`/api/videos/update/views/${videoId}`);
+
 const fetchVideo = (videoId) => axios.get(`/api/videos/v/${videoId}`);
 
 const patchWatchHistory = (videoId) => axios.patch(`/api/users/updateWatchHistory`, {videoId});
@@ -91,6 +95,22 @@ const VideoDetailpage = () => {
     },
   });
 
+  const { mutate: patchVideoViewsMutation } = useMutation({
+    mutationFn: (videoId) => patchVideoViews(videoId),
+    onSuccess: () => {
+      useQueryClient.setQueryData(["video", videoId], (oldData) => {
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            views: oldData.data.views + 1,
+          },
+        };
+      })
+      console.log("video views updated");
+    },
+  })
+
   const { mutate: postToggleVideoinPlaylistMutation } = useMutation({
     mutationFn: ({ playlistId, videoId }) =>
       postToggleVideoinPlaylist({ playlistId, videoId }),
@@ -131,7 +151,16 @@ const VideoDetailpage = () => {
   console.log("comment posted", commentData);
   const { mutate: toggleLikeMutaion } = useMutation({
     mutationFn: ({ id, isLiked }) => postLike({ id, isLiked }),
-    onSuccess: () => {
+    onSuccess: (newData) => {
+      useQueryClient.setQueryData(["video", videoId], (oldData) => {
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            likes: isLiked ? oldData.data.likes + 1 : oldData.data.likes - 1,
+          },
+      
+      };  })
       console.log("successfully  liked");
     },
   });
@@ -146,6 +175,7 @@ const VideoDetailpage = () => {
 
   useEffect(() => {
     patchWatchHistoryMutation(videoId);
+    patchVideoViewsMutation(videoId);
   } , [videoId]);
 
   const isLoading =
@@ -176,7 +206,7 @@ const VideoDetailpage = () => {
   }
 
   return (
-    <section class="w-full pb-[70px] sm:ml-[70px] sm:pb-0">
+    // <section class="w-full pb-[70px] sm:ml-[70px] sm:pb-0">
       <div class="flex w-full flex-wrap gap-4 p-4 lg:flex-nowrap">
         {videoData?.data.data && (
           <div class="col-span-12 w-full">
@@ -211,6 +241,7 @@ const VideoDetailpage = () => {
                   <div class="flex items-center justify-between gap-x-4 md:justify-end lg:justify-between xl:justify-end">
                     <div class="flex overflow-hidden rounded-lg border">
                       <button
+                      disabled={!isLogin}
                         class="group/btn flex items-center gap-x-2 border-r border-gray-700 px-4 py-1.5 after:content-[attr(data-like)] hover:bg-white/10 focus:after:content-[attr(data-like-alt)]"
                         onClick={() => {
                           toggleLikeMutaion({
@@ -218,8 +249,8 @@ const VideoDetailpage = () => {
                             isLiked: true,
                           });
                         }}
-                        data-like={Likedata?.like?.data.likeCount || 0}
-                        data-like-alt={Likedata?.like?.data.likeCount + 1 || 1}
+                        data-like={videoData.data.data.likes || 0}
+                        data-like-alt={videoData.data.data.likes + 1 || 1}
                       >
                         <span class="inline-block w-5 group-focus/btn:text-[#ae7aff]">
                           <svg
@@ -239,6 +270,7 @@ const VideoDetailpage = () => {
                         </span>
                       </button>
                       <button
+                      disabled={!isLogin}
                         class="group/btn flex items-center gap-x-2 px-4 py-1.5 after:content-[attr(data-like)] hover:bg-white/10 focus:after:content-[attr(data-like-alt)]"
                         onClick={() => {
                           toggleLikeMutaion({
@@ -246,9 +278,9 @@ const VideoDetailpage = () => {
                             isLiked: false,
                           });
                         }}
-                        data-like={Likedata?.dislikes?.data.disLikeCount}
+                        data-like={videoData.data.data.dislikes}
                         data-like-alt={
-                          Likedata?.dislikes?.data.disLikeCount + 1
+                          videoData.data.data.dislikes + 1
                         }
                       >
                         <span class="inline-block w-5 group-focus/btn:text-[#ae7aff]">
@@ -271,8 +303,12 @@ const VideoDetailpage = () => {
                     </div>
                     <div class="relative block">
                       <button
+                        // disabled = {!isLogin}
+                        onClick={(e)=>{
+                          toast.warn("Login to save")
+                        }}
                         class="peer flex items-center gap-x-2 rounded-lg bg-white px-4 py-1.5 text-black"
-                        disabled={!isLogin}
+                        
                       >
                         <span class="inline-block w-5">
                           <svg
@@ -292,7 +328,7 @@ const VideoDetailpage = () => {
                         </span>
                         Save
                       </button>
-                      <div class="absolute right-0 top-full z-10 hidden w-64 overflow-hidden rounded-lg bg-[#121212] p-4 shadow shadow-slate-50/30 hover:block peer-focus:block">
+                      {isLogin && <div class="absolute right-0 top-full z-10 hidden w-64 overflow-hidden rounded-lg bg-[#121212] p-4 shadow shadow-slate-50/30 hover:block peer-focus:block">
                         <h3 class="mb-4 text-center text-lg font-semibold">
                           Save to playlist
                         </h3>
@@ -357,7 +393,7 @@ const VideoDetailpage = () => {
                             Create new playlist
                           </button>
                         </div>
-                      </div>
+                      </div>}
                     </div>
                   </div>
                 </div>
@@ -385,8 +421,11 @@ const VideoDetailpage = () => {
                   <div class="block">
                     <button
                       onClick={() => {
-                        postSubcribeMutation(channel.data.data._id);
+                        isLogin ?
+                        postSubcribeMutation(channel.data.data._id) : toast.warn("Login to Subscribe")
                       }}
+                     
+
                       class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
                     >
                       <span class="inline-block w-5">
@@ -428,7 +467,7 @@ const VideoDetailpage = () => {
                 <h6 class="mb-4 font-semibold">
                   {commentData?.data.data.commentsCount || 0} Comments
                 </h6>
-                <div class="flex gap-x-4">
+                {isLogin && <div class="flex gap-x-4">
                   <input
                     type="text"
                     class="w-full rounded-lg border bg-transparent px-2 py-1 placeholder-white"
@@ -439,11 +478,13 @@ const VideoDetailpage = () => {
                     onClick={() => {
                       comment.trim().length > 0 && postCommentMutation(comment);
                     }}
+                    disabled={!isLogin}
+
                     class=" rounded-lg bg-[#ae7aff] px-4 py-1 text-black hover:bg-[#7a50bc]  "
                   >
                     Send
                   </button>
-                </div>
+                </div>}
               </div>
               <hr class="my-4 border-white" />
               {commentData?.data.data.comments?.map((comment) => (
@@ -510,7 +551,7 @@ const VideoDetailpage = () => {
           ))}
         </div>
       </div>
-    </section>
+    // </section>
   );
 };
 export default VideoDetailpage;

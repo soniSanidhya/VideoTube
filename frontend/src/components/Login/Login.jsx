@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 // import { useDispatch, useSelector } from "react-redux";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../Utils/functionalties/isLoginSlice";
+import { toast, ToastContainer } from "react-toastify";
 
 const postLogin = ({ username, password }) => {
   console.log("Called");
@@ -26,16 +27,22 @@ const Login = () => {
       navigate("/");
     },
     onError: (error) => {
+      toast("password or username is incorrect");
+      
       console.log("password or username is wrong");
     },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if(username === "") toast("Pleast Enter Username")
+    else if(password === "") toast("Pleast Enter Username")
+      else
     mutate({ username, password });
   };
 
   return (
+    <>
     <div className="h-screen overflow-y-auto bg-[#121212] text-white">
       <div className="mx-auto my-8 flex w-full max-w-sm flex-col px-4">
         <div className="mx-auto inline-block w-16">
@@ -124,6 +131,20 @@ const Login = () => {
         </button>
       </div>
     </div>
+    <ToastContainer
+    position="top-right"
+    autoClose={5000}
+    hideProgressBar={false}
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    draggable
+    pauseOnHover
+    theme="dark"
+    transition: Bounce
+    />
+    </>
   );
 };
 

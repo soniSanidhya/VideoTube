@@ -1,10 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useEffect, useState } from "react";
 import { Link, NavLink, useParams } from "react-router-dom";
 import { usesharedFetchChannelDetails } from "../../Utils/sharedQuaries/sharedChannelDetails";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useGetCurrentUser } from "../../Utils/sharedQuaries/sharedGetCurrentUser";
+import { toast } from "react-toastify";
+
+const postSubcribe = (channelId) =>
+  axios.post(`/api/subscriptions/c/${channelId}`);
 
 const ChannelDetails = ({ isChannel }) => {
   const isLogin = useSelector((state) => state.auth.isLogin);
@@ -23,6 +27,16 @@ const ChannelDetails = ({ isChannel }) => {
   }, [user]);
   const { data, isLoading, isError, error } =
     usesharedFetchChannelDetails(username);
+
+  const queryClient = useQueryClient();
+
+  const { mutate: postSubcribeMutation } = useMutation({
+    mutationFn: (channelId) => postSubcribe(channelId),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["channel", username]);
+      console.log("subscribed");
+    },
+  });
 
   if (isLoading) {
     return <div className="text-center">Loading...</div>;
@@ -66,7 +80,8 @@ const ChannelDetails = ({ isChannel }) => {
             <div class="inline-block">
               <button
                 onClick={() => setIsEdit(!isEdit)}
-              class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
+                class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
+              >
                 <span class="inline-block w-5">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -83,13 +98,20 @@ const ChannelDetails = ({ isChannel }) => {
                     ></path>
                   </svg>
                 </span>
-                { isEdit ? "View Channel" : "Edit"}
+                {isEdit ? "View Channel" : "Edit"}
               </button>
             </div>
           ) : (
             <div class="inline-block">
               <div class="inline-flex min-w-[145px] justify-end">
-                <button class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
+                <button
+                  // disabled={!isLogin}
+                  onClick={() => {
+                    isLogin ? 
+                    postSubcribeMutation(data.data.data._id) : toast.warn("Login to Subscribe")
+                  }}
+                  class="group/btn mr-1 flex w-full items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
+                >
                   <span class="inline-block w-5">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -113,32 +135,40 @@ const ChannelDetails = ({ isChannel }) => {
             </div>
           )}
         </div>
-        {isEdit ?  (
+        {isEdit ? (
           <ul class="no-scrollbar sticky top-[66px] z-[2] flex flex-row gap-x-2 overflow-auto border-b-2 border-gray-400 bg-[#121212] py-2 sm:top-[82px]">
             <li class="w-full">
-              <NavLink to={`edit-channel-info`} className={({ isActive }) => (isActive ? " bg-white" : "")}>
-              <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
-                Personal Information
-              </button>
+              <NavLink
+                to={`edit-channel-info`}
+                className={({ isActive }) => (isActive ? " bg-white" : "")}
+              >
+                <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                  Personal Information
+                </button>
               </NavLink>
             </li>
             <li class="w-full">
-              <NavLink to={`edit-personal-info`} className={({ isActive }) => (isActive ? " bg-white" : "")}>
-              <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
-                Channel Information
-              </button>
+              <NavLink
+                to={`edit-personal-info`}
+                className={({ isActive }) => (isActive ? " bg-white" : "")}
+              >
+                <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                  Channel Information
+                </button>
               </NavLink>
             </li>
             <li class="w-full">
-              <NavLink to={`change-password`} className={({ isActive }) => (isActive ? " bg-white" : "")} >
-              <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
-                Change Password
-              </button>
+              <NavLink
+                to={`change-password`}
+                className={({ isActive }) => (isActive ? " bg-white" : "")}
+              >
+                <button class="w-full border-b-2 border-[#ae7aff] px-3 py-1.5 text-[#ae7aff]">
+                  Change Password
+                </button>
               </NavLink>
             </li>
           </ul>
-        ) : 
-        (
+        ) : (
           <ul class="no-scrollbar sticky top-[66px] z-[2] flex flex-row gap-x-2 overflow-auto border-b-2 border-gray-400 bg-[#121212] py-2 sm:top-[82px]">
             <li class="w-full">
               <NavLink

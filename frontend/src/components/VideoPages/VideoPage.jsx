@@ -8,12 +8,13 @@ import viewsFormatter from "../../Utils/viewsFormatter";
 import timeFormatter from "../../Utils/timeformater";
 import durationFormatter from "../../Utils/durationFormatter";
 import { useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
 const VideoPage = () => {
 
   const isLogin = useSelector((state) => state.auth.isLogin);
 
   console.log("isLogin", isLogin);
-  
+ 
 
 
   const { data, isLoading, isError, error } = useSharedVideoQuery();
@@ -30,7 +31,7 @@ const VideoPage = () => {
   return (
     <>
       {data?.data.data?.length ? (
-        <section class="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
+        // <section class="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
           <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4 p-4">
             {data.data.data?.map((element) => {
               return (
@@ -75,7 +76,7 @@ const VideoPage = () => {
               );
             })}
           </div>
-        </section>
+        // </section>
       ) : (
         <div className="h-screen overflow-y-auto bg-[#121212] text-white">
           <div className="flex min-h-[calc(100vh-66px)] sm:min-h-[calc(100vh-82px)]">
@@ -112,7 +113,7 @@ const VideoPage = () => {
           </div>
         </div>
       )}
-      
+    
     </>
   );
 };

@@ -41,6 +41,8 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
         throw new ApiError(400, "user not found");
     }
 
+    console.log("user",user);
+    
     const userPlaylist = await Playlist.aggregate([
         {
             $match: {

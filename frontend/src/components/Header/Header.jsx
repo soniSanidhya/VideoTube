@@ -24,6 +24,8 @@ const Header = () => {
   const handleLogout = () => {
     console.log("Logout");
     mutate();
+    // window.location.reload();
+    
   };
   return (
     <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">

@@ -1,6 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import errorFormatter from '../../Utils/errorFormatter';
 
 const updatePassword = ({oldPassword , newPassword}) => axios.patch("/api/users/changePassword" , {oldPassword , newPassword});
 
@@ -11,14 +13,41 @@ const ChannelChangePassword = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     console.log(oldPassword , newPassword , confirmPassword);
     
-    const {mutate} = useMutation(
+    const {mutate , isError , error} = useMutation(
         {
             mutationFn : ({oldPassword , newPassword}) => updatePassword({oldPassword , newPassword}),
             onSuccess : (data) => {
+              toast.success("Password changed successfully" , {toastId : "passwordSuccess"});
                 console.log("changed");
+            },
+            onError : (error) => {
+              toast.error(errorFormatter(error) , { toastId : "passwordError"});
             }
         }
     )
+   
+
+
+
+    const checks = ()=>{
+      if (oldPassword.length < 4 || newPassword.length < 4 || confirmPassword.length < 4) {
+        toast.error("Password must be more than 4 characters" , {toastId : "passwordError"});
+        return false;
+    }
+    if (newPassword !== confirmPassword) {
+        toast.error("Password does not match" , {toastId : "passwordError"});
+        return false;
+
+    }
+    if (newPassword === oldPassword) {
+        toast.error("New password must be different from old password" , {toastId : "passwordError"});
+        return false;
+
+    }
+    return true;
+    }
+
+
 
     return (
         <div class="flex flex-wrap justify-center gap-y-4 py-4">
@@ -75,7 +104,7 @@ const ChannelChangePassword = () => {
             <div class="flex items-center justify-end gap-4 p-4">
               <button class="inline-block rounded-lg border px-3 py-1.5 hover:bg-white/10">Cancel</button>
               <button onClick={()=>{
-                newPassword === confirmPassword && mutate({oldPassword , newPassword});
+                checks() && mutate({oldPassword , newPassword});
               }} class="inline-block bg-[#ae7aff] px-3 py-1.5 text-black">Update Password</button>
             </div>
           </div>

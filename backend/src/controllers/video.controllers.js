@@ -4,7 +4,7 @@ import { User } from "../models/user.models.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
@@ -68,13 +68,99 @@ const publishAVideo = asyncHandler(async (req, res) => {
 const getVideoById = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     //TODO: get video by id
-    const video = await Video.findById(videoId).populate("owner", "username avatar fullName");
+    // const video = await Video.findById(videoId).populate("owner", "username avatar fullName");
+
+    const video = await Video.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(videoId),
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline : [
+                    {   
+                        $project : {
+                            avatar :1,
+                            fullName : 1,
+                            username : 1
+                        }
+                    }
+                ]
+            }
+        },
+        // {
+        //     $lookup : {
+        //         from : "likes",
+        //         localField : "_id",
+        //         foreignField : "video",
+        //         as : "isLiked",
+        //         pipeline : [
+        //             {
+        //                 $addFields : {
+        //                     isLiked : { $eq : ["$likedBy", new mongoose.Types.ObjectId(req?.user._id) || "null" ]}
+        //                 }
+        //             }
+                
+        //         ]
+        //     }
+        // },
+        
+        {
+            $lookup : {
+                from : "likes",
+                let: { videoId: '$_id' },
+                pipeline : [{
+                    $match : {
+                        $expr : {
+                            $and : [
+                                { $eq : ["$video" , "$$videoId"]},
+                                { $eq : ["$isLiked" , true]}
+                            ]
+                        }
+                    }
+                }],
+                as : "likes"
+            }
+        },
+        {
+            $lookup : {
+                from : "likes",
+                let : {videoId : "$_id"},
+                pipeline : [
+                    {
+                        $match : {
+                            $expr : {
+                                $and : [
+                                    { $eq : ["$video" , "$$videoId"]},
+                                    { $eq : ["$isLiked" , false]}
+                                ]
+                            }
+                        }
+                    }
+                ],
+                as : "dislikes"
+            }
+        },
+        {
+            $addFields : {
+                likes : { $size : "$likes" },
+                dislikes : { $size : "$dislikes" },
+                owner : { $arrayElemAt : ["$owner", 0]}
+            }
+        }
+    ])
+
     if (!video) {
         throw new ApiError(404, "video Not found");
     }
 
     res.status(200).json(
-        new ApiResponse(200, video, "Video Fetched Successfully")
+        new ApiResponse(200, video[0], "Video Fetched Successfully")
     );
 });
 
@@ -107,23 +193,28 @@ const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     //TODO: update video details like title, description, thumbnail
     const thumbnailLocalPath = req.file?.path;
-    if (!thumbnailLocalPath) {
-        throw new ApiError(400, "Please provide a thumbnail file");
-    }
-    const uploadedThumbnail = await uploadOnCloudinary(thumbnailLocalPath);
-    if (!uploadedThumbnail.url) {
-        throw new ApiError(
-            400,
-            "Something went wrong while uploading thumbnail"
-        );
-    }
+    const {title, description} = req.body;
+
+    // if (!thumbnailLocalPath) {
+    //     throw new ApiError(400, "Please provide a thumbnail file");
+    // }
+
+    const uploadedThumbnail =  await uploadOnCloudinary(thumbnailLocalPath) || null;
+    // if (!uploadedThumbnail.url) {
+    //     throw new ApiError(
+    //         400,
+    //         "Something went wrong while uploading thumbnail"
+    //     );
+    // }
     const video = await Video.findById(videoId);
     const oldThumbnail = video.thumbnail || null;
     const updatedVideo = await Video.findByIdAndUpdate(
         video._id,
         {
             $set: {
-                thumbnail: uploadedThumbnail.url,
+                thumbnail: uploadedThumbnail?.url || oldThumbnail,
+                title,
+                description,
             },
         },
         {
@@ -191,6 +282,34 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     );
 });
 
+const updateViews = asyncHandler(async (req, res) => {
+    const { videoId } = req.params;
+
+    if(!videoId || !isValidObjectId(videoId)){
+        throw new ApiError(400, "Please provide a valid video id");
+    }
+
+    const video = await Video.findByIdAndUpdate(
+        videoId,
+        {
+            $inc: {
+                views: 1,
+            },
+        },
+        {
+            new: true,
+        }
+    )
+
+    if (!video) {
+        throw new ApiError(500, "Something Went wrong");
+    }
+
+    res.status(200).json(
+        new ApiResponse(200, video, "Views updated successfully")
+    )
+})
+
 export {
     getAllVideos,
     publishAVideo,
@@ -199,4 +318,5 @@ export {
     updateVideo,
     deleteVideo,
     togglePublishStatus,
+    updateViews,
 };

@@ -3,38 +3,42 @@ import axios from 'axios';
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import viewsFormatter from '../../Utils/viewsFormatter';
+import { useSelector } from 'react-redux';
 
 const postSubcribe = (channelId) =>
   axios.post(`/api/subscriptions/c/${channelId}`);
 
-const fetchChannelSubcribers = (channelName) => axios.get(`/api/subscriptions/c/${channelName}`);
+const fetchSubscribedTo = (userId) => axios.get(`/api/subscriptions/u/${userId}`);
 
-const ChannelSubcribed = () => {
+const SubscribedTo = () => {
 
-  const { username : channelName } = useOutletContext();
 
-  console.log(channelName);
+
+const user = useSelector((state) => state.user.currentUser); 
+// console.log(user);
+
   const queryClient = useQueryClient();
   const { mutate: postSubcribeMutation } = useMutation({
     mutationFn: (channelId) => postSubcribe(channelId),
     onSuccess: () => {
       queryClient.invalidateQueries([
         "channel",
-        channelName,
+        user._id,
       ]);
       console.log("subscribed");
     },
   });
 
   const { data, isLoading, isError, error } = useQuery({
-    queryKey : ["channelSubscribers" , channelName],
-    queryFn : () => fetchChannelSubcribers(channelName)
+    queryKey : ["userSubcribedTo" , user._id],
+    queryFn : () => fetchSubscribedTo(user._id)
   }
   );
   console.log(data);
   
     return (
       data?.data?.data?.length ? (
+        <section class="w-full px-4 pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
         <div class="flex flex-col gap-y-4 py-4">
         <div class="relative mb-2 rounded-lg bg-white py-2 pl-8 pr-3 text-black">
           <span class="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400">
@@ -79,7 +83,10 @@ const ChannelSubcribed = () => {
         )}
         
       </div>
+      </section>
       ) : (
+        <section class="w-full px-4 pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
+
         <div class="flex justify-center p-4">
         <div class="w-full max-w-sm text-center">
           <p class="mb-3 w-full">
@@ -109,8 +116,9 @@ const ChannelSubcribed = () => {
           </p>
         </div>
       </div>
+      </section>
     )
     );
 };
 
-export default ChannelSubcribed;
+export default SubscribedTo;

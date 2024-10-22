@@ -389,6 +389,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 as: "subscribedTo",
             },
         },
+        
         {
             $addFields: {
                 channelSubscriberCount: {
@@ -406,6 +407,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                         else: false,
                     },
                 },
+                
             },
         },
         {
@@ -424,6 +426,8 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
             },
         },
     ]);
+
+    
     console.log(channel);
 
     if (!channel) {
@@ -721,6 +725,8 @@ const updateWatchHistory = asyncHandler(async (req, res) => {
         new ApiResponse(200, user , "Watch History updated")
     );
 });
+
+// const changeUsername
 
 export {
     registerUser,
