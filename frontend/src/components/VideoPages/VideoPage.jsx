@@ -13,13 +13,13 @@ const VideoPage = () => {
 
   const isLogin = useSelector((state) => state.auth.isLogin);
 
-  console.log("isLogin", isLogin);
+  // console.log("isLogin", isLogin);
  
 
 
   const { data, isLoading, isError, error } = useSharedVideoQuery();
   // const response = axios.get("/api/videos/");
-  // console.log("response", response);
+  // // console.log("response", response);
   
   if (isLoading) {
     return <div className="text-center">Loading...</div>;
@@ -31,41 +31,41 @@ const VideoPage = () => {
   return (
     <>
       {data?.data.data?.length ? (
-        // <section class="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
-          <div class="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4 p-4">
+        // <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
+          <div className="grid grid-cols-[repeat(auto-fit,_minmax(300px,_1fr))] gap-4 p-4">
             {data.data.data?.map((element) => {
               return (
-                <Link to={`/watch/${element._id}`} key={element._id} class="w-full">
-                <div key={element._id} class="w-full">
-                  <div class="relative mb-2 w-full pt-[56%]">
-                    <div class="absolute inset-0">
+                <Link to={`/watch/${element._id}`} key={element._id} className="w-full">
+                <div key={element._id} className="w-full">
+                  <div className="relative mb-2 w-full pt-[56%]">
+                    <div className="absolute inset-0">
                       <img
                         src={element.thumbnail}
                         alt={element.title}
-                        class="h-full w-full"
+                        className="h-full w-full"
                       />
                     </div>
-                    <span class="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
+                    <span className="absolute bottom-1 right-1 inline-block rounded bg-black px-1.5 text-sm">
                       {durationFormatter(element.duration)}
                     </span>
                   </div>
-                  <div class="flex gap-x-2 items-center">
-                    <div class="h-10 w-10 shrink-0 ">
-                    <Link to={`/channel/c/${element?.owner.username}`} class="block">
+                  <div className="flex gap-x-2 items-center">
+                    <div className="h-10 w-10 shrink-0 ">
+                    <Link to={`/channel/c/${element?.owner.username}`} className="block">
                       <img
                         src={element.owner.avatar}
                         alt={element.owner.username}
-                        class="h-10 w-10 rounded-full"
+                        className="h-10 w-10 rounded-full"
                       />
                       </Link>
                     </div>
-                    <div class="w-full">
-                      <h6 class="mb-1 font-semibold">{element.title}</h6>
-                      <p class="flex text-sm text-gray-200">
+                    <div className="w-full">
+                      <h6 className="mb-1 font-semibold">{element.title}</h6>
+                      <p className="flex text-sm text-gray-200">
                         {viewsFormatter(element.views)} Views · {timeFormatter(element.createdAt)}
                       </p>
-                      <Link to={`/channel/c/${element?.owner.username}`} class="block">
-                      <p class="text-sm text-gray-200">
+                      <Link to={`/channel/c/${element?.owner.username}`} className="block">
+                      <p className="text-sm text-gray-200">
                         @{element.owner.username}
                       </p>
                       </Link>

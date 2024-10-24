@@ -1,4 +1,4 @@
-import mongoose, { isValidObjectId } from "mongoose";
+import mongoose from "mongoose";
 import { Like } from "../models/like.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -7,16 +7,17 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 const toggleVideoLike = asyncHandler(async (req, res) => {
     const { videoId } = req.params;
     let { isLiked } = req.body;
+    isLiked = isLiked === true || isLiked === "true";
     //TODO: toggle like on video
 
-    console.log("entered toggle like" , isLiked);
+    // console.log("entered toggle like" , isLiked);
     
     if (!videoId) {
         throw new ApiError(400, "Video id is missing");
     }
     // isLiked = isLiked === "true" ? true : false;
 
-    console.log("isLiked: ", isLiked);
+    // console.log("isLiked: ", isLiked);
     
     const likePrev = await Like.find({ video: videoId, likedBy: req.user._id });
 
@@ -61,8 +62,8 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
         new ApiResponse(
             200,
             like,
-            flag
-                ? "Video deleted successfully"
+                flag ? (isLiked ? "Video unliked successfully"
+                : "Video liked successfully")
                 : "Video liked / disliked successfully"
         )
     );
@@ -85,9 +86,9 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
     if (likePrev.length > 0) {
         flag = true;
         like = await Like.findByIdAndDelete(likePrev[0]._id);
-        console.log("Like deleted");
+        // console.log("Like deleted");
     } else {
-        console.log("Like created");
+        // console.log("Like created");
         flag = false;
         like = await Like.create({
             comment: commentId,
@@ -117,22 +118,42 @@ const toggleCommentLike = asyncHandler(async (req, res) => {
 
 const toggleTweetLike = asyncHandler(async (req, res) => {
     const { tweetId } = req.params;
+    let { isLiked } = req.body;
+    // console.log("isLiked: ", isLiked);
+    
     //TODO: toggle like on tweet
     if (!tweetId) {
         throw new ApiError(400, "Tweet id is missing");
     }
 
     const likePrev = await Like.find({ tweet: tweetId, likedBy: req.user._id });
+
+   
     let flag = false;
-    let like;
-    if (likePrev.length > 0) {
+    let like = {};
+    if (likePrev?.length > 0 && !(likePrev[0].isLiked ^ isLiked)) {
         flag = true;
-        like = await Like.findByIdAndDelete(likePrev[0]._id);
+
+        await Like.findByIdAndDelete(likePrev[0]._id);
+    } else if (likePrev?.length > 0 && likePrev[0].isLiked ^ isLiked) {
+        flag = false;
+
+        like = await Like.findByIdAndUpdate(
+            likePrev[0]._id,
+            {
+                isLiked,
+            },
+            {
+                new: true,
+            }
+        );
     } else {
         flag = false;
+
         like = await Like.create({
             tweet: tweetId,
             likedBy: req.user._id,
+            isLiked,
         });
     }
 
@@ -140,7 +161,7 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
         throw new ApiError(
             500,
             flag
-                ? "Something went wrong while disliking tweet"
+                ? "Something went wrong while disliking  tweet"
                 : "Something went wrong while liking  tweet"
         );
     }
@@ -149,7 +170,9 @@ const toggleTweetLike = asyncHandler(async (req, res) => {
         new ApiResponse(
             200,
             like,
-            flag ? "Tweet disliked successfully" : "Tweet liked successfully"
+               flag ? isLiked? "Tweet liked successfully"
+                : "Tweet disliked successfully"
+                : "tweet liked / disliked successfully"
         )
     );
 });
@@ -201,7 +224,7 @@ const getLikeCount = asyncHandler(async (req, res) => {
             },
         },
     ]);
-    console.log(likeCount);
+    // console.log(likeCount);
 
     res.status(200).json(
         new ApiResponse(
@@ -237,7 +260,7 @@ const getDisLikeCount = asyncHandler(async (req, res) => {
             },
         },
     ]);
-    console.log(disLikeCount);
+    // console.log(disLikeCount);
 
     res.status(200).json(
         new ApiResponse(

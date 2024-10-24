@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs, { watch } from "fs";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { User } from "../models/user.models.js";
@@ -32,7 +32,7 @@ const generateRefreshTokenAndAcessToken = async (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     const { fullName, username, password, email } = req.body;
     if (
         [fullName, username, email, password].some((el) => el?.trim() === "") ||
@@ -42,14 +42,14 @@ const registerUser = asyncHandler(async (req, res) => {
     ) {
         throw new ApiError(400, "All feilds are required");
     }
-    console.log("received");
+    // console.log("received");
 
     const userExist = await User.findOne({
         $or: [{ username }, { email }],
     });
-    console.log(userExist);
+    // console.log(userExist);
 
-    console.log("user doesnot exist");
+    // console.log("user doesnot exist");
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
     // const coverImageLocalPath = req.files?.coverImage[0]?.path;
@@ -63,9 +63,9 @@ const registerUser = asyncHandler(async (req, res) => {
         coverImageLocalPath = req.files.coverImage[0].path;
     }
 
-    console.log(avatarLocalPath);
-    console.log(coverImageLocalPath);
-    console.log(req.files);
+    // console.log(avatarLocalPath);
+    // console.log(coverImageLocalPath);
+    // console.log(req.files);
 
     if (!avatarLocalPath) {
         throw new ApiError(409, "avatar is Required");
@@ -79,9 +79,9 @@ const registerUser = asyncHandler(async (req, res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
-    console.log("Images Uploaded to cloudinary");
-    console.log(avatar);
-    console.log(coverImage);
+    // console.log("Images Uploaded to cloudinary");
+    // console.log(avatar);
+    // console.log(coverImage);
 
     const user = await User.create({
         fullName,
@@ -92,7 +92,7 @@ const registerUser = asyncHandler(async (req, res) => {
         coverImage: coverImage?.url || "",
     });
 
-    console.log("sent to database");
+    // console.log("sent to database");
 
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
@@ -111,7 +111,7 @@ const userLogin = asyncHandler(async (req, res) => {
     // const { username, password, email } = req.body;
     const { fullName, username, password, email } = req.body;
 
-    console.log(req.body);
+    // console.log(req.body);
 
     if (!(username || email)) {
         throw new ApiError(400, "Email or username is required");
@@ -158,7 +158,7 @@ const userLogin = asyncHandler(async (req, res) => {
 });
 
 const logoutUser = asyncHandler(async (req, res) => {
-    console.log("user", req.user);
+    // console.log("user", req.user);
 
     await User.findByIdAndUpdate(
         req.user._id,
@@ -236,11 +236,11 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     if (!oldPassword || !newPassword) {
         throw new ApiError(400, "all feilds are required");
     }
-    // console.log(oldPassword);
-    // console.log(newPassword);
+    // // console.log(oldPassword);
+    // // console.log(newPassword);
 
     const user = await User.findById(req.user?._id);
-    // console.log(user);
+    // // console.log(user);
 
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
     if (!isPasswordCorrect) {
@@ -260,8 +260,8 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
-    console.log("body", req.body);
-    console.log(req.body.fullName);
+    // console.log("body", req.body);
+    // console.log(req.body.fullName);
 
     // const { fullName, email } = req.body;
     const fullName = req.body.fullName;
@@ -283,7 +283,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
             new: true,
         }
     ).select("-password");
-    console.log(req.body.email);
+    // console.log(req.body.email);
 
     return res
         .status(200)
@@ -292,21 +292,21 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 const updateAvatar = asyncHandler(async (req, res) => {
     const avatarLocalFilePath = req.file?.path;
-    console.log(req.file);
-    console.log(req.user);
+    // console.log(req.file);
+    // console.log(req.user);
 
     if (!avatarLocalFilePath) {
         throw new ApiError(400, "Avatar is required");
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalFilePath);
-    console.log(avatar.url);
+    // console.log(avatar.url);
 
     if (!avatar.url) {
         throw new ApiError(400, "failed while Uploading on cloudinary");
     }
     const oldAvatar = req.user.avatar;
-    console.log("old", oldAvatar);
+    // console.log("old", oldAvatar);
 
     const user = await User.findByIdAndUpdate(
         req.user._id,
@@ -320,7 +320,7 @@ const updateAvatar = asyncHandler(async (req, res) => {
         }
     ).select("-password -refreshToken");
 
-    console.log(user.avatar);
+    // console.log(user.avatar);
     deleteFromCloudinary(oldAvatar);
 
     return res.status(200).json(new ApiResponse(200, user, "Avatar changed"));
@@ -363,7 +363,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     if (!username) {
         throw new ApiError(400, "Username Missing!!");
     }
-    console.log(username);
+    // console.log(username);
 
     const userId = req.user?._id;
 
@@ -389,7 +389,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 as: "subscribedTo",
             },
         },
-        
+
         {
             $addFields: {
                 channelSubscriberCount: {
@@ -407,7 +407,6 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                         else: false,
                     },
                 },
-                
             },
         },
         {
@@ -427,8 +426,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         },
     ]);
 
-    
-    console.log(channel);
+    // console.log(channel);
 
     if (!channel) {
         throw new ApiError(404, "channel does not exist");
@@ -445,90 +443,90 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 
 const getWatchHistory = asyncHandler(async (req, res) => {
     // const user = await User.aggregate([
-        // {
-        //     $match: {
-        //         _id: new mongoose.Types.ObjectId(req.user._id),
-        //     },
-        // },
-        // {
-        //     $lookup: {
-        //         from: "videos",
-        //         localField: "wathchHistory",
-        //         foreignField: "_id",
-        //         as: "watchHistory",
-        //         pipeline: [
-        //             {
-        //                 $lookup: {
-        //                     from: "users",
-        //                     localField: "owner",
-        //                     foreignField: "_id",
-        //                     as: "owner",
-        //                     pipeline: [
-        //                         {
-        //                             $project: {
-        //                                 fullName: 1,
-        //                                 avatar: 1,
-        //                                 username: 1,
-        //                             },
-        //                         },
-        //                         {
-        //                             $addFields: {
-        //                                 owner: {
-        //                                     $first: "$owner",
-        //                                 },
-        //                             },
-        //                         },
-        //                     ],
-        //                 },
-        //             },
-        //         ],
-        //     },
-        // },
+    // {
+    //     $match: {
+    //         _id: new mongoose.Types.ObjectId(req.user._id),
+    //     },
+    // },
+    // {
+    //     $lookup: {
+    //         from: "videos",
+    //         localField: "wathchHistory",
+    //         foreignField: "_id",
+    //         as: "watchHistory",
+    //         pipeline: [
+    //             {
+    //                 $lookup: {
+    //                     from: "users",
+    //                     localField: "owner",
+    //                     foreignField: "_id",
+    //                     as: "owner",
+    //                     pipeline: [
+    //                         {
+    //                             $project: {
+    //                                 fullName: 1,
+    //                                 avatar: 1,
+    //                                 username: 1,
+    //                             },
+    //                         },
+    //                         {
+    //                             $addFields: {
+    //                                 owner: {
+    //                                     $first: "$owner",
+    //                                 },
+    //                             },
+    //                         },
+    //                     ],
+    //                 },
+    //             },
+    //         ],
+    //     },
+    // },
     // ]);
 
-    // console.log(req.user._id);
-    
-    const user = await User.findById(req.user._id).populate({
-        path: "watchHistory",
-        populate: {
-            path: "owner",
-            select: "username fullName avatar",
-        }
-    });
-    console.log(user);
-    
-    const userObject = user.toObject();
+    // // console.log(req.user._id);
 
-    const userHistory = await User.aggregate([
-        {
-            $replaceRoot: { newRoot: userObject }
-        },
-        {
-            $project: {
-                watchHistory: 1,
-                _id : 0
-            }
-        },
-        {
-            $unwind: "$watchHistory"
-        },
-        {
-            $project: {
-                _id: "$watchHistory._id",
-                videoFile: "$watchHistory.videoFile",
-                thumbnail: "$watchHistory.thumbnail",
-                title: "$watchHistory.title",
-                description: "$watchHistory.description",
-                duration: "$watchHistory.duration",
-                views: "$watchHistory.views",
-                isPublished: "$watchHistory.isPublished",
-                owner: "$watchHistory.owner",
-                createdAt: "$watchHistory.createdAt",
-                updatedAt: "$watchHistory.updatedAt",
-                __v: "$watchHistory.__v",
-            },
-        },
-    ])
+    // const user = await User.findById(req.user._id).populate({
+    //     path: "watchHistory",
+    //     populate: {
+    //         path: "owner",
+    //         select: "username fullName avatar",
+    //     }
+    // });
+    // // console.log(user);
+
+    // const userObject = user.toObject();
+
+    // const userHistory = await User.aggregate([
+    //     {
+    //         $replaceRoot: { newRoot: userObject }
+    //     },
+    //     // {
+    //     //     $project: {
+    //     //         watchHistory: 1,
+    //     //         _id : 0
+    //     //     }
+    //     // },
+    //     // {
+    //     //     $unwind: "$watchHistory"
+    //     // },
+    //     // {
+    //     //     $project: {
+    //     //         _id: "$watchHistory._id",
+    //     //         videoFile: "$watchHistory.videoFile",
+    //     //         thumbnail: "$watchHistory.thumbnail",
+    //     //         title: "$watchHistory.title",
+    //     //         description: "$watchHistory.description",
+    //     //         duration: "$watchHistory.duration",
+    //     //         views: "$watchHistory.views",
+    //     //         isPublished: "$watchHistory.isPublished",
+    //     //         owner: "$watchHistory.owner",
+    //     //         createdAt: "$watchHistory.createdAt",
+    //     //         updatedAt: "$watchHistory.updatedAt",
+    //     //         __v: "$watchHistory.__v",
+    //     //     },
+    //     // },
+    // ])
 
     // const user = await User.aggregate([
     //     {
@@ -585,12 +583,80 @@ const getWatchHistory = asyncHandler(async (req, res) => {
     //     {
     //         $unwind: "$watchHistory",
     //     },
-        
-       
+
     // ])
 
+    const userHistory = await User.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(req.user._id),
+            },
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "watchHistory",
+                foreignField: "_id",
+                as: "watchHistory",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        fullName: 1,
+                                        username: 1,
+                                        avatar: 1,
+                                    },
+                                },
+                            ],
+                        },
+                    },
+                    {
+                        $addFields: {
+                            owner: {
+                                $first: "$owner",
+                            },
+                        },
+                    },
+                ],
+            },
+        },
+        {
+            $project: {
+                watchHistory: 1,
+                _id: 0,
+            },
+        },
+        {
+            $unwind: "$watchHistory",
+        },
+        {
+            $project: {
+                _id: "$watchHistory._id",
+                videoFile: "$watchHistory.videoFile",
+                thumbnail: "$watchHistory.thumbnail",
+                title: "$watchHistory.title",
+                description: "$watchHistory.description",
+                duration: "$watchHistory.duration",
+                views: "$watchHistory.views",
+                isPublished: "$watchHistory.isPublished",
+                owner: "$watchHistory.owner",
+                createdAt: "$watchHistory.createdAt",
+                updatedAt: "$watchHistory.updatedAt",
+                __v: "$watchHistory.__v",
+            },
+        },
+       
+        
+    ]);
+
     res.status(200).json(
-        new ApiResponse(200,  userHistory , "Watch History Fetched")
+        new ApiResponse(200, userHistory, "Watch History Fetched")
     );
 });
 
@@ -705,25 +771,35 @@ const updateWatchHistory = asyncHandler(async (req, res) => {
         throw new ApiError(400, "videoId is required");
     }
 
-    const user = await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $set: {
-                watchHistory: [...req.user.watchHistory, videoId],
-            },
-        },
-        { new: true }
-    );
+    // const user = await User.findByIdAndUpdate(
+    //     req.user._id,
+    //     {
+    //         $addToSet: {
+    //             watchHistory: videoId,
+    //         },
+    //     },
+    //     { new: true }
+    // );
 
-    console.log(videoId);
-
+    const user = await User.findById(req.user._id);
+    if (!user.watchHistory.includes(videoId)) {
+        user.watchHistory.push(videoId);
+        await user.save();
+    }
     if (!user) {
-        throw new ApiError(500, "Something went wrong while updating watch history");
+        throw new ApiError(404, "User not found");
     }
 
-    res.status(200).json(
-        new ApiResponse(200, user , "Watch History updated")
-    );
+    // console.log(videoId);
+
+    if (!user) {
+        throw new ApiError(
+            500,
+            "Something went wrong while updating watch history"
+        );
+    }
+
+    res.status(200).json(new ApiResponse(200, user, "Watch History updated"));
 });
 
 // const changeUsername

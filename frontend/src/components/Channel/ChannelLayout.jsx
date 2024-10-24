@@ -12,9 +12,9 @@ const ChannelLayout = () => {
   };
   console.log(username);
   return (
-    <section class="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
+    <section className="w-full pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
       <ChannelDetails isChannel={channelAvilable} />
-      <div class="px-4 pb-4">
+      <div className="px-4 pb-4">
       {isChannel && <Outlet context = {{username}} />}
       
         </div>

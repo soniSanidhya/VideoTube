@@ -13,7 +13,7 @@ app.use(express.urlencoded({extended : true, limit : "16kb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-console.log(":Hello");
+// console.log(":Hello");
 
 import userRouter from "./routes/user.routes.js";
 import videoRouter from "./routes/video.routes.js";

@@ -28,6 +28,7 @@ import ChannelChangePassword from "./components/Channel/channelChangePassword.js
 import ChannelEditChannelInfo from "./components/Channel/channelEditChannelInfo.jsx";
 import SubscribedTo from "./components/SubscribedTo/SubscribedTo.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
+import SignupForm from "./components/Login/SignUpForm.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(<>
     <Route path="/" element={<Layout />}>
@@ -50,6 +51,7 @@ const router = createBrowserRouter(
       <Route path="dashboard" element ={ <Dashboard/> } />
     </Route>
       <Route path="login" element={<Login/>} ></Route>
+      <Route path="signup" element={<SignupForm/>}></Route>
   </>
   )
 );

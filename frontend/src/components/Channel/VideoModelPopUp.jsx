@@ -12,7 +12,7 @@ const VideoModelPopUp = (uploaded) => {
     const [isUploaded, setIsUploaded] = React.useState(false);
     const [thumbnail, setThumbnail] = React.useState(null);
     const [video, setVideo] = React.useState(null);
-    console.log(uploaded);
+    // console.log(uploaded);
     const handleTitle = (e) => {
         setTitle(e.target.value);
     }
@@ -31,7 +31,7 @@ const VideoModelPopUp = (uploaded) => {
         mutationFn: (form) => postVideo(form),
         onSuccess: () => {
             
-            console.log('Video Uploaded');
+            // console.log('Video Uploaded');
         }
     })
     const form = new FormData();
@@ -42,77 +42,77 @@ const VideoModelPopUp = (uploaded) => {
         form.append('description', description);
         form.append('thumbnail', thumbnail);
         form.append('videoFile', video);
-        console.log( "form" ,
-            title,
-            description,
-            thumbnail,
-            video
-        );
+        // console.log( "form" ,
+            // title,
+            // description,
+            // thumbnail,
+            // video
+        // );
         
-        console.log(form.get('videoFile'));
-        console.log(form.get('videoFile').name);
-        console.log(form.get('videoFile').size);
+        // console.log(form.get('videoFile'));
+        // console.log(form.get('videoFile').name);
+        // console.log(form.get('videoFile').size);
         
         
         
         mutate(form);
     }
-    console.log(isPending);
-    console.log(isSuccess);
-    console.log("video",video);
+    // console.log(isPending);
+    // console.log(isSuccess);
+    // console.log("video",video);
     
 
   
       if(isPending){
-        console.log('Uploading...');
+        // console.log('Uploading...');
         
-        return <div class="absolute inset-x-0 top-0 z-10 flex h-[calc(100vh-66px)] items-center justify-center bg-black/50 px-4 pb-[86px] pt-4 sm:h-[calc(100vh-82px)] sm:px-14 sm:py-8">
-        <div class="w-full max-w-lg overflow-auto rounded-lg border border-gray-700 bg-[#121212] p-4">
-          <div class="mb-4 flex items-start justify-between">
-            <h2 class="text-xl font-semibold">
+        return <div className="absolute inset-x-0 top-0 z-10 flex h-[calc(100vh-66px)] items-center justify-center bg-black/50 px-4 pb-[86px] pt-4 sm:h-[calc(100vh-82px)] sm:px-14 sm:py-8">
+        <div className="w-full max-w-lg overflow-auto rounded-lg border border-gray-700 bg-[#121212] p-4">
+          <div className="mb-4 flex items-start justify-between">
+            <h2 className="text-xl font-semibold">
               Uploading Video...
-              <span class="block text-sm text-gray-300">Track your video uploading process.</span>
+              <span className="block text-sm text-gray-300">Track your video uploading process.</span>
             </h2>
-            <button class="h-6 w-6">
+            <button className="h-6 w-6">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke="currentColor"
                 aria-hidden="true">
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </button>
           </div>
-          <div class="mb-6 flex gap-x-2 border p-3">
-            <div class="w-8 shrink-0">
-              <span class="inline-block w-full rounded-full bg-[#E4D3FF] p-1 text-[#AE7AFF]">
+          <div className="mb-6 flex gap-x-2 border p-3">
+            <div className="w-8 shrink-0">
+              <span className="inline-block w-full rounded-full bg-[#E4D3FF] p-1 text-[#AE7AFF]">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   aria-hidden="true">
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5A1.125 1.125 0 0118 18.375M20.625 4.5H3.375m17.25 0c.621 0 1.125.504 1.125 1.125M20.625 4.5h-1.5C18.504 4.5 18 5.004 18 5.625m3.75 0v1.5c0 .621-.504 1.125-1.125 1.125M3.375 4.5c-.621 0-1.125.504-1.125 1.125M3.375 4.5h1.5C5.496 4.5 6 5.004 6 5.625m-3.75 0v1.5c0 .621.504 1.125 1.125 1.125m0 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m1.5-3.75C5.496 8.25 6 7.746 6 7.125v-1.5M4.875 8.25C5.496 8.25 6 8.754 6 9.375v1.5m0-5.25v5.25m0-5.25C6 5.004 6.504 4.5 7.125 4.5h9.75c.621 0 1.125.504 1.125 1.125m1.125 2.625h1.5m-1.5 0A1.125 1.125 0 0118 7.125v-1.5m1.125 2.625c-.621 0-1.125.504-1.125 1.125v1.5m2.625-2.625c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125M18 5.625v5.25M7.125 12h9.75m-9.75 0A1.125 1.125 0 016 10.875M7.125 12C6.504 12 6 12.504 6 13.125m0-2.25C6 11.496 5.496 12 4.875 12M18 10.875c0 .621-.504 1.125-1.125 1.125M18 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m-12 5.25v-5.25m0 5.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125m-12 0v-1.5c0-.621-.504-1.125-1.125-1.125M18 18.375v-5.25m0 5.25v-1.5c0-.621.504-1.125 1.125-1.125M18 13.125v1.5c0 .621.504 1.125 1.125 1.125M18 13.125c0-.621.504-1.125 1.125-1.125M6 13.125v1.5c0 .621-.504 1.125-1.125 1.125M6 13.125C6 12.504 5.496 12 4.875 12m-1.5 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M19.125 12h1.5m0 0c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h1.5m14.25 0h1.5"></path>
                 </svg>
               </span>
             </div>
-            <div class="flex flex-col">
+            <div className="flex flex-col">
               <h6>{video?.name}</h6>
-              <p class="text-sm">{sizeFormatter(video?.size)}</p>
-              <div class="mt-2">
+              <p className="text-sm">{sizeFormatter(video?.size)}</p>
+              <div className="mt-2">
                 <svg
                   aria-hidden="true"
                   role="status"
-                  class="mr-2 inline-block h-5 w-5 animate-spin text-gray-200"
+                  className="mr-2 inline-block h-5 w-5 animate-spin text-gray-200"
                   viewBox="0 0 100 101"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg">
@@ -127,10 +127,10 @@ const VideoModelPopUp = (uploaded) => {
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-4">
-            <button onClick={()=>{ uploaded.uploaded.uploaded();}} class="border px-4 py-3">Cancel</button>
+          <div className="grid grid-cols-2 gap-4">
+            <button onClick={()=>{ uploaded.uploaded.uploaded();}} className="border px-4 py-3">Cancel</button>
             <button
-              class="bg-[#ae7aff] px-4 py-3 text-black disabled:bg-[#E4D3FF]"
+              className="bg-[#ae7aff] px-4 py-3 text-black disabled:bg-[#E4D3FF]"
               disabled = ""
               >
               Finish
@@ -142,51 +142,51 @@ const VideoModelPopUp = (uploaded) => {
 
    
     if(isSuccess){
-        console.log('Uploaded...');
-        return  <div class="absolute inset-x-0 top-0 z-10 flex h-[calc(100vh-66px)] items-center justify-center bg-black/50 px-4 pb-[86px] pt-4 sm:h-[calc(100vh-82px)] sm:px-14 sm:py-8">
-        <div class="w-full max-w-lg overflow-auto rounded-lg border border-gray-700 bg-[#121212] p-4">
-          <div class="mb-4 flex items-start justify-between">
-            <h2 class="text-xl font-semibold">
+        // console.log('Uploaded...');
+        return  <div className="absolute inset-x-0 top-0 z-10 flex h-[calc(100vh-66px)] items-center justify-center bg-black/50 px-4 pb-[86px] pt-4 sm:h-[calc(100vh-82px)] sm:px-14 sm:py-8">
+        <div className="w-full max-w-lg overflow-auto rounded-lg border border-gray-700 bg-[#121212] p-4">
+          <div className="mb-4 flex items-start justify-between">
+            <h2 className="text-xl font-semibold">
               Uploaded Video
-              <span class="block text-sm text-gray-300">Track your video uploading process.</span>
+              <span className="block text-sm text-gray-300">Track your video uploading process.</span>
             </h2>
-            <button class="h-6 w-6">
+            <button className="h-6 w-6">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke-width="1.5"
+                strokeWidth="1.5"
                 stroke="currentColor"
                 aria-hidden="true">
                 <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M6 18L18 6M6 6l12 12"></path>
               </svg>
             </button>
           </div>
-          <div class="mb-6 flex gap-x-2 border p-3">
-            <div class="w-8 shrink-0">
-              <span class="inline-block w-full rounded-full bg-[#E4D3FF] p-1 text-[#AE7AFF]">
+          <div className="mb-6 flex gap-x-2 border p-3">
+            <div className="w-8 shrink-0">
+              <span className="inline-block w-full rounded-full bg-[#E4D3FF] p-1 text-[#AE7AFF]">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   aria-hidden="true">
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-1.5A1.125 1.125 0 0118 18.375M20.625 4.5H3.375m17.25 0c.621 0 1.125.504 1.125 1.125M20.625 4.5h-1.5C18.504 4.5 18 5.004 18 5.625m3.75 0v1.5c0 .621-.504 1.125-1.125 1.125M3.375 4.5c-.621 0-1.125.504-1.125 1.125M3.375 4.5h1.5C5.496 4.5 6 5.004 6 5.625m-3.75 0v1.5c0 .621.504 1.125 1.125 1.125m0 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m1.5-3.75C5.496 8.25 6 7.746 6 7.125v-1.5M4.875 8.25C5.496 8.25 6 8.754 6 9.375v1.5m0-5.25v5.25m0-5.25C6 5.004 6.504 4.5 7.125 4.5h9.75c.621 0 1.125.504 1.125 1.125m1.125 2.625h1.5m-1.5 0A1.125 1.125 0 0118 7.125v-1.5m1.125 2.625c-.621 0-1.125.504-1.125 1.125v1.5m2.625-2.625c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125M18 5.625v5.25M7.125 12h9.75m-9.75 0A1.125 1.125 0 016 10.875M7.125 12C6.504 12 6 12.504 6 13.125m0-2.25C6 11.496 5.496 12 4.875 12M18 10.875c0 .621-.504 1.125-1.125 1.125M18 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m-12 5.25v-5.25m0 5.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125m-12 0v-1.5c0-.621-.504-1.125-1.125-1.125M18 18.375v-5.25m0 5.25v-1.5c0-.621.504-1.125 1.125-1.125M18 13.125v1.5c0 .621.504 1.125 1.125 1.125M18 13.125c0-.621.504-1.125 1.125-1.125M6 13.125v1.5c0 .621-.504 1.125-1.125 1.125M6 13.125C6 12.504 5.496 12 4.875 12m-1.5 0h1.5m-1.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M19.125 12h1.5m0 0c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h1.5m14.25 0h1.5"></path>
                 </svg>
               </span>
             </div>
-            <div class="flex flex-col">
+            <div className="flex flex-col">
             <h6>{video?.name}</h6>
-            <p class="text-sm">{sizeFormatter(video?.size)}</p>
-              <div class="mt-2 flex items-center">
-                <span class="mr-2 inline-block w-6 text-[#ae7aff]">
+            <p className="text-sm">{sizeFormatter(video?.size)}</p>
+              <div className="mt-2 flex items-center">
+                <span className="mr-2 inline-block w-6 text-[#ae7aff]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
@@ -202,9 +202,9 @@ const VideoModelPopUp = (uploaded) => {
               </div>
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-4">
-            <button onClick={()=>{   uploaded.uploaded();}} class="border px-4 py-3">Cancel</button>
-            <button onClick={()=>{  uploaded.uploaded();}} class="bg-[#ae7aff] px-4 py-3 text-black disabled:bg-[#E4D3FF]">Finish</button>
+          <div className="grid grid-cols-2 gap-4">
+            <button onClick={()=>{   uploaded.uploaded();}} className="border px-4 py-3">Cancel</button>
+            <button onClick={()=>{  uploaded.uploaded();}} className="bg-[#ae7aff] px-4 py-3 text-black disabled:bg-[#E4D3FF]">Finish</button>
           </div>
         </div>
       </div>
@@ -212,54 +212,54 @@ const VideoModelPopUp = (uploaded) => {
 
     return (
         <div onClick={(e)=>{
-          console.log("newvideo false");
+          // console.log("newvideo false");
           
           e.stopPropagation() ;
           uploaded.uploaded();
-        }}   class="absolute inset-0 md:left-60 md:top-30  z-10 bg-black/50 px-4 pb-[86px] pt-4 sm:px-14 sm:py-8 top-20">
-        <div onClick={(e) => {e.stopPropagation()}} class="h-[80%]  overflow-auto border bg-[#121212]">
+        }}   className="absolute inset-0 md:left-60 md:top-30  z-10 bg-black/50 px-4 pb-[86px] pt-4 sm:px-14 sm:py-8 top-20">
+        <div onClick={(e) => {e.stopPropagation()}} className="h-[80%]  overflow-auto border bg-[#121212]">
             <form onSubmit={handleSubmit} >
-          <div class="flex items-center justify-between border-b p-4">
-            <h2 class="text-xl font-semibold">Upload Videos</h2>
+          <div className="flex items-center justify-between border-b p-4">
+            <h2 className="text-xl font-semibold">Upload Videos</h2>
             <button
                 type="submit"
-              class="group/btn mr-1 flex w-auto items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]">
+              className="group/btn mr-1 flex w-auto items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]">
               Save
             </button>
           </div>
-          <div class="mx-auto flex w-full max-w-3xl flex-col gap-y-4 p-4">
-            <div class="w-full border-2 border-dashed px-4 py-12 text-center">
-              <span class="mb-4 inline-block w-24 rounded-full bg-[#E4D3FF] p-4 text-[#AE7AFF]">
+          <div className="mx-auto flex w-full max-w-3xl flex-col gap-y-4 p-4">
+            <div className="w-full border-2 border-dashed px-4 py-12 text-center">
+              <span className="mb-4 inline-block w-24 rounded-full bg-[#E4D3FF] p-4 text-[#AE7AFF]">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
-                  stroke-width="1.5"
+                  strokeWidth="1.5"
                   stroke="currentColor"
                   aria-hidden="true">
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                     d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"></path>
                 </svg>
               </span>
-              <h6 class="mb-2 font-semibold">Drag and drop video files to upload</h6>
-              <p class="text-gray-400">Your videos will be private untill you publish them.</p>
+              <h6 className="mb-2 font-semibold">Drag and drop video files to upload</h6>
+              <p className="text-gray-400">Your videos will be private untill you publish them.</p>
               <label
-                for="upload-video"
-                class="group/btn mt-4 inline-flex w-auto cursor-pointer items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]">
+                htmlFor="upload-video"
+                className="group/btn mt-4 inline-flex w-auto cursor-pointer items-center gap-x-2 bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]">
                 <input
                 onChange={handleVideo}
                   type="file"
                   id="upload-video"
-                  class="sr-only" />
+                  className="sr-only" />
                 Select Files
               </label>
             </div>
-            <div class="w-full">
+            <div className="w-full">
               <label
-                for="thumbnail"
-                class="mb-1 inline-block">
+                htmlFor="thumbnail"
+                className="mb-1 inline-block">
                 Thumbnail
                 <sup>*</sup>
               </label>
@@ -267,12 +267,12 @@ const VideoModelPopUp = (uploaded) => {
               onChange={handleThumbnail}
                 id="thumbnail"
                 type="file"
-                class="w-full border p-1 file:mr-4 file:border-none file:bg-[#ae7aff] file:px-3 file:py-1.5" />
+                className="w-full border p-1 file:mr-4 file:border-none file:bg-[#ae7aff] file:px-3 file:py-1.5" />
             </div>
-            <div class="w-full">
+            <div className="w-full">
               <label
-                for="title"
-                class="mb-1 inline-block">
+                htmlFor="title"
+                className="mb-1 inline-block">
                 Title
                 <sup>*</sup>
               </label>
@@ -281,14 +281,14 @@ const VideoModelPopUp = (uploaded) => {
                 id="title"
                 type="text"
                 name="title"
-                class="w-full border bg-transparent px-2 py-1 outline-none" />
+                className="w-full border bg-transparent px-2 py-1 outline-none" />
                 
             </div>
-            <div class="w-full">
+            <div className="w-full">
               <label
-                for="desc"
+                htmlFor="desc"
 
-                class="mb-1 inline-block">
+                className="mb-1 inline-block">
                 Description
                 <sup>*</sup>
               </label>
@@ -296,7 +296,7 @@ const VideoModelPopUp = (uploaded) => {
               onChange={handleDescription}
                 id="desc"
                 name='description'
-                class="h-40 w-full resize-none border bg-transparent px-2 py-1 outline-none"></textarea>
+                className="h-40 w-full resize-none border bg-transparent px-2 py-1 outline-none"></textarea>
             </div>
           </div>
           </form>

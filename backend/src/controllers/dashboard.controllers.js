@@ -10,7 +10,7 @@ import { User } from "../models/user.models.js";
 const getChannelStats = asyncHandler(async (req, res) => {
     // TODO: Get the channel stats like total video views, total subscribers, total videos, total likes etc.
     const { channelId } = req.params;
-    console.log("dashBoard");
+    // console.log("dashBoard");
     
     if (!channelId) {
         throw new ApiError(400, "Channel id is missing");

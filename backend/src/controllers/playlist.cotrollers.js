@@ -41,7 +41,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
         throw new ApiError(400, "user not found");
     }
 
-    console.log("user",user);
+    // console.log("user",user);
     
     const userPlaylist = await Playlist.aggregate([
         {
@@ -110,7 +110,7 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
 const getPlaylistById = asyncHandler(async (req, res) => {
     const { playlistId } = req.params;
     //TODO: get playlist by id
-    console.log("fetching plalist");
+    // console.log("fetching plalist");
 
     if (!playlistId) {
         throw new ApiError(400, "playlist id is required");
@@ -189,8 +189,8 @@ const getPlaylistById = asyncHandler(async (req, res) => {
             },
         },
     ]);
-    console.log("playList with id", playlistwithID);
-    console.log("playList", playlist);
+    // console.log("playList with id", playlistwithID);
+    // console.log("playList", playlist);
 
     res.status(200).json(
         new ApiResponse(200, playlist, "Playlist Fatched Successfully")
@@ -199,7 +199,7 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
 const addVideoToPlaylist = asyncHandler(async (req, res) => {
     const { playlistId, videoId } = req.params;
-    console.log(playlistId, videoId);
+    // console.log(playlistId, videoId);
     const playlist = await Playlist.findById(playlistId);
     if (!playlist) {
         throw new ApiError(400, "Playlist Not found");
@@ -294,7 +294,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 
     const deletedPlaylist = await Playlist.findByIdAndDelete(playlistId);
 
-    console.log(deletedPlaylist);
+    // console.log(deletedPlaylist);
 
     if (!deletedPlaylist) {
         throw new ApiError(500, "Something went wrong while deleting playlist");
@@ -311,7 +311,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
     //TODO: update playlist
 
     // const playlist = await Playlist.findById(playlistId);
-    // console.log(playlist);
+    // // console.log(playlist);
 
     const updatedPlayList = await Playlist.findByIdAndUpdate(
         playlistId,

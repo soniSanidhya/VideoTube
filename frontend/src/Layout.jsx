@@ -15,7 +15,7 @@ const Layout = () => {
     const { data } = useGetCurrentUser(true);
     const dispatch = useDispatch();
     useEffect(() => {
-        console.log("data from layout", data);
+        // console.log("data from layout", data);
         if (data) {
             dispatch(login());
             dispatch(setCurrentUser(data.data.data));
@@ -24,11 +24,11 @@ const Layout = () => {
 
   return (
     <>
-      <div class="h-screen overflow-y-auto bg-[#121212] text-white">
+      <div className="h-screen overflow-y-auto bg-[#121212] text-white">
         <Header />
-        <div class=" flex min-h-[calc(100vh-66px)] sm:min-h-[calc(100vh-82px)]">
+        <div className=" flex min-h-[calc(100vh-66px)] sm:min-h-[calc(100vh-82px)]">
           <SidePanel />
-        <section class="w-full px-4 pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
+        <section className="w-full px-4 pb-[70px] sm:ml-[70px] sm:pb-0 lg:ml-0">
 
           <Outlet />
           </section>

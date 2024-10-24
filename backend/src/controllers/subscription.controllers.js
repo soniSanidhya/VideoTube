@@ -12,7 +12,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
     if (!channelId) {
         throw new ApiError(400, "Channel id is missing ");
     }
-    console.log("entered toggleSubscription", channelId);
+    // console.log("entered toggleSubscription", channelId);
 
     const isSubscribed = await Subscription.find({
         subscriber: req.user._id,
@@ -67,7 +67,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
     // const subscribers = await Subscription.find({
     //     channel: channelId,
     // } , {subscribe : 1}).populate("subscriber", "username fullName avatar");
-    console.log("user", req.user);
+    // console.log("user", req.user);
 
     const subscribers = await Subscription.aggregate([
         {

@@ -25,7 +25,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body;
 
-    console.log("hello hi video");
+    // console.log("hello hi video");
 
     if (!title || !description) {
         throw new ApiError(400, "Please provide title and description");
@@ -43,7 +43,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     if (!uploadedVideo.url && !uploadedThumbnail) {
         throw new ApiError(400, "Something went wrong while uploading video");
     }
-    console.log("duration: ", uploadedVideo.duration);
+    // console.log("duration: ", uploadedVideo.duration);
     const video = await Video.create({
         videoFile: uploadedVideo.url,
         thumbnail: uploadedThumbnail.url,
@@ -54,7 +54,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     });
 
     const createdVideo = await Video.findById(video._id);
-    console.log("created video: ", createdVideo);
+    // console.log("created video: ", createdVideo);
 
     if (!createdVideo) {
         throw new ApiError(500, "Something Went wrong");
@@ -166,7 +166,7 @@ const getVideoById = asyncHandler(async (req, res) => {
 
 const getUserVideos = asyncHandler(async (req, res) => {
     const { username } = req.params;
-    console.log("username: ", username);
+    // console.log("username: ", username);
     
     if(!username){
         throw new ApiError(400, "Please provide a username");
@@ -174,7 +174,7 @@ const getUserVideos = asyncHandler(async (req, res) => {
         
     const owner = await User.findOne({ username});
 
-    console.log("owner: ", owner);
+    // console.log("owner: ", owner);
     
     const videos = await Video.find({ owner: owner._id })
         .populate("owner", "username avatar fullName")

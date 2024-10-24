@@ -11,14 +11,14 @@ const ChannelChangePassword = () => {
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    console.log(oldPassword , newPassword , confirmPassword);
+    // console.log(oldPassword , newPassword , confirmPassword);
     
     const {mutate , isError , error} = useMutation(
         {
             mutationFn : ({oldPassword , newPassword}) => updatePassword({oldPassword , newPassword}),
             onSuccess : (data) => {
               toast.success("Password changed successfully" , {toastId : "passwordSuccess"});
-                console.log("changed");
+                // console.log("changed");
             },
             onError : (error) => {
               toast.error(errorFormatter(error) , { toastId : "passwordError"});
@@ -50,62 +50,62 @@ const ChannelChangePassword = () => {
 
 
     return (
-        <div class="flex flex-wrap justify-center gap-y-4 py-4">
+        <div className="flex flex-wrap justify-center gap-y-4 py-4">
 
-        <div class="w-full sm:w-1/2 lg:w-1/3">
-          <h5 class="font-semibold">Password</h5>
-          <p class="text-gray-300">Please enter your current password to change your password.</p>
+        <div className="w-full sm:w-1/2 lg:w-1/3">
+          <h5 className="font-semibold">Password</h5>
+          <p className="text-gray-300">Please enter your current password to change your password.</p>
         </div>
-        <div class="w-full sm:w-1/2 lg:w-2/3">
-          <div class="rounded-lg border">
-            <div class="flex flex-wrap gap-y-4 p-4">
-              <div class="w-full">
+        <div className="w-full sm:w-1/2 lg:w-2/3">
+          <div className="rounded-lg border">
+            <div className="flex flex-wrap gap-y-4 p-4">
+              <div className="w-full">
                 <label
-                  class="mb-1 inline-block"
-                  for="old-pwd">
+                  className="mb-1 inline-block"
+                  htmlFor="old-pwd">
                   Current password
                 </label>
                 <input
                     onChange={(e) => setOldPassword(e.target.value)}
                   type="password"
-                  class="w-full rounded-lg border bg-transparent px-2 py-1.5"
+                  className="w-full rounded-lg border bg-transparent px-2 py-1.5"
                   id="old-pwd"
                   placeholder="Current password" />
               </div>
-              <div class="w-full">
+              <div className="w-full">
                 <label
-                  class="mb-1 inline-block"
-                  for="new-pwd">
+                  className="mb-1 inline-block"
+                  htmlFor="new-pwd">
                   New password
                 </label>
                 <input
                 onChange={(e) => setNewPassword(e.target.value)}
                   type="password"
-                  class="w-full rounded-lg border bg-transparent px-2 py-1.5"
+                  className="w-full rounded-lg border bg-transparent px-2 py-1.5"
                   id="new-pwd"
                   placeholder="New password" />
-                <p class="mt-0.5 text-sm text-gray-300">Your new password must be more than 8 characters.</p>
+                <p className="mt-0.5 text-sm text-gray-300">Your new password must be more than 8 characters.</p>
               </div>
-              <div class="w-full">
+              <div className="w-full">
                 <label
-                  class="mb-1 inline-block"
-                  for="cnfrm-pwd">
+                  className="mb-1 inline-block"
+                  htmlFor="cnfrm-pwd">
                   Confirm password
                 </label>
                 <input
                 onChange={(e) => setConfirmPassword(e.target.value)}
                   type="password"
-                  class="w-full rounded-lg border bg-transparent px-2 py-1.5"
+                  className="w-full rounded-lg border bg-transparent px-2 py-1.5"
                   id="cnfrm-pwd"
                   placeholder="Confirm password" />
               </div>
             </div>
-            <hr class="border border-gray-300" />
-            <div class="flex items-center justify-end gap-4 p-4">
-              <button class="inline-block rounded-lg border px-3 py-1.5 hover:bg-white/10">Cancel</button>
+            <hr className="border border-gray-300" />
+            <div className="flex items-center justify-end gap-4 p-4">
+              <button className="inline-block rounded-lg border px-3 py-1.5 hover:bg-white/10">Cancel</button>
               <button onClick={()=>{
                 checks() && mutate({oldPassword , newPassword});
-              }} class="inline-block bg-[#ae7aff] px-3 py-1.5 text-black">Update Password</button>
+              }} className="inline-block bg-[#ae7aff] px-3 py-1.5 text-black">Update Password</button>
             </div>
           </div>
         </div>

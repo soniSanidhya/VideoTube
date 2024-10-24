@@ -22,7 +22,7 @@ const Header = () => {
     },
   });
   const handleLogout = () => {
-    console.log("Logout");
+    // console.log("Logout");
     mutate();
     // window.location.reload();
     
@@ -30,6 +30,7 @@ const Header = () => {
   return (
     <header className="sticky inset-x-0 top-0 z-50 w-full border-b border-white bg-[#121212] px-4">
       <nav className="mx-auto flex max-w-7xl items-center py-2">
+        <Link to={"/"}>
         <div className="mr-4 w-12 shrink-0 sm:w-16">
           <svg
             style={{ width: "100%" }}
@@ -79,12 +80,13 @@ const Header = () => {
                 y2="44.9649"
                 gradientUnits="userSpaceOnUse"
               >
-                <stop stop-color="#007EF8"></stop>
-                <stop offset="1" stop-color="#FF4A9A"></stop>
+                <stop stopColor="#007EF8"></stop>
+                <stop offset="1" stopColor="#FF4A9A"></stop>
               </linearGradient>
             </defs>
           </svg>
         </div>
+        </Link>
         <div className="relative mx-auto hidden w-full max-w-md overflow-hidden sm:block">
           <input
             className="w-full border bg-transparent py-1 pl-8 pr-3 placeholder-white outline-none sm:py-2"
@@ -181,8 +183,8 @@ const Header = () => {
                     y2="44.9649"
                     gradientUnits="userSpaceOnUse"
                   >
-                    <stop stop-color="#007EF8"></stop>
-                    <stop offset="1" stop-color="#FF4A9A"></stop>
+                    <stop stopColor="#007EF8"></stop>
+                    <stop offset="1" stopColor="#FF4A9A"></stop>
                   </linearGradient>
                 </defs>
               </svg>
@@ -305,32 +307,32 @@ const Header = () => {
             </li>
           </ul>
           {isLogin ? (
-            <>
+            <div className="flex gap-4">
               <Link to={`/channel/c/${data?.data.data.username}`}>
-                <div class="mb-8 mt-auto px-4 sm:mb-0 sm:mt-0 sm:px-0">
-                  <button class="flex w-full gap-4 text-left sm:items-center">
+                <div className="mb-8 mt-auto px-4 sm:mb-0 sm:mt-0 sm:px-0">
+                  <button className="flex w-full gap-4 text-left sm:items-center">
                     <img
                       // data?.data.data.avatar
                       src={data?.data.data.avatar}
                       alt="React-Patterns"
-                      class="h-16 w-16 shrink-0 rounded-full sm:h-12 sm:w-12"
+                      className="h-16 w-16 shrink-0 rounded-full sm:h-12 sm:w-12"
                     />
-                    <div class="w-full pt-2 sm:hidden">
-                      <h6 class="font-semibold">React Patterns</h6>
-                      <p class="text-sm text-gray-300">@reactpatterns</p>
+                    <div className="w-full pt-2 sm:hidden">
+                      <h6 className="font-semibold">React Patterns</h6>
+                      <p className="text-sm text-gray-300">@reactpatterns</p>
                     </div>
                   </button>
                 </div>
               </Link>
-              <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
+              {/* <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0"> */}
                 <button
                   onClick={handleLogout}
                   className="mr-1 w-full bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto"
                 >
                   Log Out
                 </button>
-              </div>
-            </>
+              {/* </div> */}
+            </div>
           ) : (
             <div className="mb-8 mt-auto flex w-full flex-wrap gap-4 px-4 sm:mb-0 sm:mt-0 sm:items-center sm:px-0">
               <Link to="/login">
@@ -338,9 +340,12 @@ const Header = () => {
                   Log in
                 </button>
               </Link>
+              <Link to="/signup">
+
               <button className="mr-1 w-full bg-[#ae7aff] px-3 py-2 text-center font-bold text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e] sm:w-auto">
                 Sign up
               </button>
+              </Link>
             </div>
           )}
         </div>

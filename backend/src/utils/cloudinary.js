@@ -16,12 +16,12 @@ cloudinary.config({
 
 const uploadOnCloudinary = async (localFilePath) => {
     try {
-        // console.log("name ",process.env.CLOUD_NAME);
-        // console.log("key ",process.env.API_KEY);
-        // console.log("Secret",process.env.API_SECRET_KEY);
+        // // console.log("name ",process.env.CLOUD_NAME);
+        // // console.log("key ",process.env.API_KEY);
+        // // console.log("Secret",process.env.API_SECRET_KEY);
 
-        console.log(" upload", localFilePath);
-        console.log("uploading");
+        // console.log(" upload", localFilePath);
+        // console.log("uploading");
         
         if (!localFilePath) return null;
 
@@ -29,11 +29,11 @@ const uploadOnCloudinary = async (localFilePath) => {
             resource_type: "auto",
         });
 
-        console.log("file is Uploaded on cloudinary", response);
+        // console.log("file is Uploaded on cloudinary", response);
         fs.unlinkSync(localFilePath);
         return response;
     } catch (error) {
-        console.log(error);
+        // console.log(error);
 
         // fs.unlinkSync(localFilePath);
         await safeUnlink(localFilePath);
@@ -55,7 +55,14 @@ const deleteFromCloudinary = async (url) => {
         if (!publicId) return ;
         const response = await cloudinary.uploader.destroy(publicId);
     } catch (error) {
-        console.log(error);
+        // console.log(error);
+    }
+};
+const safeUnlink = async (filePath) => {
+    try {
+        fs.unlinkSync(filePath);
+    } catch (error) {
+        // console.log(`Failed to delete file: ${filePath}`, error);
     }
 };
 

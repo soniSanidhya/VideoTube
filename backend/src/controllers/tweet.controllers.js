@@ -29,22 +29,125 @@ const createTweet = asyncHandler(async (req, res) => {
 const getUserTweets = asyncHandler(async (req, res) => {
     // TODO: get user tweets
     const { username } = req.params;
-
+    const currUser = req.body;
+    // console.log("currentUser" , currUser?.username);
+    
     if (!username) {
         throw new ApiError(400, "username is missing");
     }
 
-    const user = await User.findOne({username});
+    const user = await User.findOne({ username });
+
+    
 
     if (!user) {
         throw new ApiError(404, "user not found");
     }
 
-    const tweets = await Tweet.find({
-        owner: user._id,
-    }).populate("owner", "username fullName avatar");
+    // const tweets = await Tweet.find({
+    //     owner: user._id,
+    // }).populate("owner", "username fullName avatar");
 
-    
+    const tweets = await Tweet.aggregate([
+        {
+            $match: {
+                owner: new mongoose.Types.ObjectId(user._id),
+            },
+        },{
+            $lookup: {
+                from: "users",
+                localField: "owner",
+                foreignField: "_id",
+                as: "owner",
+                pipeline : [
+                   {
+                    $project : {
+                        avatar : 1,
+                        username : 1,
+                        fullName : 1
+                    }
+                   }
+                ]
+            },
+        },
+        {
+            $unwind: "$owner",
+        },
+        {
+            $lookup: {
+                from: "likes",
+                let: { tweetId: "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$tweet", "$$tweetId"] },
+                                    { $eq: ["$isLiked", false] },
+                                ],
+                            },
+                        },
+                    },
+                ],
+                as: "dislikes",
+            },
+        },
+        {
+            $lookup: {
+                from: "likes",
+                let: { tweetId: "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$tweet", "$$tweetId"] },
+                                    { $eq: ["$isLiked", true] },
+                                ],
+                            },
+                        },
+                    },
+                ],
+                as: "likes",
+            },
+        },
+        {
+            $lookup: {
+                from: "likes",
+                let: { tweetId: "$_id" },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    { $eq: ["$tweet", "$$tweetId"] },
+                                    { $eq: ["$likedBy", (new mongoose.Types.ObjectId(currUser?._id) || null) ] },
+                                ],
+                            },
+                        },
+                        
+                    },
+                ],
+                as: "isliked",
+            },
+        },
+        {
+            $addFields : {
+                isliked : "$isliked.isLiked"
+            }
+        },
+        {
+            $addFields : {
+                likes : {
+                    $size : "$likes",
+                },
+                dislikes : {
+                    $size : "$dislikes",
+                },
+                
+            }
+        }
+    ]);
 
     if (!tweets) {
         throw new ApiError(404, "tweet not found");
@@ -108,7 +211,6 @@ const deleteTweet = asyncHandler(async (req, res) => {
     res.status(200).json(
         new ApiResponse(200, tweet, "tweet deleted successfully")
     );
-
 });
 
 export { createTweet, getUserTweets, updateTweet, deleteTweet };
