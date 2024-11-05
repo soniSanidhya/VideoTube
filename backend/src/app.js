@@ -24,9 +24,7 @@ import likeRouter from "./routes/like.routes.js"
 import subscriptionRouter from "./routes/subscription.routes.js"
 import dashboardRouter from "./routes/dashboard.routes.js"
 
-app.get('/' ,(req , res)=>{
-    res.send("Sanidhya");
-})
+
 
 app.use('/api/users' , userRouter);
 app.use('/api/videos' , videoRouter);
