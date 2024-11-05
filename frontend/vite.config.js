@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       // '/api' : "http://localhost:8000"
-      '/api' : "https://video-tube-ldfup083b-sonisanidhyas-projects.vercel.app"
+      '/api' : "https://video-tube-eight.vercel.app"
     }
   }
 })
