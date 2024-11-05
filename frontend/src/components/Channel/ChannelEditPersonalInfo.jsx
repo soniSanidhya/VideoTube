@@ -9,28 +9,28 @@ const ChannelEditPersonalInfo = () => {
 
 
 
-  const user = useSelector(state => state.user.currentUser);
-  const name = user?.fullName.split(" ");
-  const [firstName , setFirstName] = useState( name[0] || "");
-  const [lastName , setLastName] = useState(name[1] ||"");
-  const [email , setEmail] = useState(user?.email || "");
+  // const user = useSelector(state => state.user.currentUser);
+  // const name = user?.fullName.split(" ");
+  // const [firstName , setFirstName] = useState( name[0] || "");
+  // const [lastName , setLastName] = useState(name[1] ||"");
+  // const [email , setEmail] = useState(user?.email || "");
 
-  console.log(firstName , lastName , email);
-  const queryClient = useQueryClient();
-  const {mutate , isError , error} = useMutation(
-    {
-      mutationFn  : ({fullName , email}) => updatePersonalDetails({fullName , email}),
-      onSuccess : (data) => {
-        queryClient.invalidateQueries(["channel" , user?.username]);
-        console.log(data);}
-    }
-  )
+  // console.log(firstName , lastName , email);
+  // const queryClient = useQueryClient();
+  // const {mutate , isError , error} = useMutation(
+  //   {
+  //     mutationFn  : ({fullName , email}) => updatePersonalDetails({fullName , email}),
+  //     onSuccess : (data) => {
+  //       queryClient.invalidateQueries(["channel" , user?.username]);
+  //       console.log(data);}
+  //   }
+  // )
 
-  const notify = (error) => toast(error);
+  // const notify = (error) => toast(error);
 
-  if (isError) {
-      notify(error.response.data.message);
-  }
+  // if (isError) {
+  //     notify(error.response.data.message);
+  // }
 
     // return (
     //     <div className="flex flex-wrap justify-center gap-y-4 py-4">
