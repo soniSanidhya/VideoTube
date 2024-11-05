@@ -23,9 +23,9 @@ import Login from "./components/Login/Login.jsx";
 import { Provider } from "react-redux";
 import {store} from "../src/Utils/store/store.js"
 import VideoListPage from "./components/VideoPages/VideoListPage.jsx";
-import ChannelEditPersonalInfo from "./components/Channel/channelEditPersonalInfo.jsx";
-import ChannelChangePassword from "./components/Channel/channelChangePassword.jsx";
-import ChannelEditChannelInfo from "./components/Channel/channelEditChannelInfo.jsx";
+import ChannelEditPersonalInfo from "./components/Channel/ChannelEditPersonalInfo.jsx";
+import ChannelChangePassword from "./components/Channel/ChannelChangePassword.jsx";
+import ChannelEditChannelInfo from "./components/Channel/ChannelEditChannelInfo.jsx";
 import SubscribedTo from "./components/SubscribedTo/SubscribedTo.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
 import SignupForm from "./components/Login/SignUpForm.jsx";
