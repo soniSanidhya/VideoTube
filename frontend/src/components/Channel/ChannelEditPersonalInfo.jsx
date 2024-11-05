@@ -43,7 +43,7 @@ const ChannelEditPersonalInfo = () => {
             <div className="flex flex-wrap gap-y-4 p-4">
               <div className="w-full lg:w-1/2 lg:pr-2">
                 <label
-                  for="firstname"
+                  htmlFor="firstname"
                   className="mb-1 inline-block">
                   First name
                 </label>
@@ -57,7 +57,7 @@ const ChannelEditPersonalInfo = () => {
               </div>
               <div className="w-full lg:w-1/2 lg:pl-2">
                 <label
-                  for="lastname"
+                  htmlFor="lastname"
                   className="mb-1 inline-block">
                   Last name
                 </label>
