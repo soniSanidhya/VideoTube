@@ -2,8 +2,8 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import VideoPage from "./components/VideoPages/VideoPage.jsx";
 import "./index.css";
-import Header from "./components/Header/Header.jsx";
-import SidePanel from "./components/SidePanel/SidePanel.jsx";
+// import Header from "./components/Header/Header.jsx";
+// import SidePanel from "./components/SidePanel/SidePanel.jsx";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -28,7 +28,7 @@ import ChannelChangePassword from "./components/Channel/ChannelChangePassword.js
 import ChannelEditChannelInfo from "./components/Channel/ChannelEditChannelInfo.jsx";
 import SubscribedTo from "./components/SubscribedTo/SubscribedTo.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
-import SignupForm from "./components/Login/SignUpForm.jsx";
+import SignupForm from "./components/Login/SignupForm.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(<>
     <Route path="/" element={<Layout />}>
