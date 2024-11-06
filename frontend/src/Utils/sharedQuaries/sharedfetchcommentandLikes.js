@@ -3,11 +3,11 @@ import axios from "axios";
 import api from "../axiosHelper";
 
 const fetchLikes = (videoId) => (
-  axios.get(`https://video-tube-eight.vercel.app/api/likes/getLikes/${videoId}`)
+  api.get(`/api/likes/getLikes/${videoId}`)
 )
 
 const fetchDisLikes = (videoId) => (
-  axios.get(`/api/likes/getDisLikes/${videoId}`)
+  api.get(`/api/likes/getDisLikes/${videoId}`)
 )
 
 const fetchComments = (videoId) => (
