@@ -143,7 +143,7 @@ const Login = () => {
         draggable
         pauseOnHover
         theme="dark"
-        transition={Bounce}
+        transition="Bounce"
       />
     </>
   );
