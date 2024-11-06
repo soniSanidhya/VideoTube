@@ -2,8 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import api from '../../Utils/axiosHelper';
 
-const updatePersonalDetails =({fullName , email}) =>  axios.patch("https://video-tube-eight.vercel.app/api/users/update-account" , {fullName , email} )
+const updatePersonalDetails =({fullName , email}) =>  api.patch("/api/users/update-account" , {fullName , email} )
 
 const ChannelEditPersonalInfo = () => {
 

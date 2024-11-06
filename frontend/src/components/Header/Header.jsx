@@ -6,9 +6,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useDispatch } from "react-redux";
 import { logout } from "../../Utils/functionalties/isLoginSlice";
 import { useGetCurrentUser } from "../../Utils/sharedQuaries/sharedGetCurrentUser";
+import api from "../../Utils/axiosHelper";
 
 const logOutUser = () => {
-  return axios.post("https://video-tube-eight.vercel.app/api/users/logout");
+  return api.post("/api/users/logout");
 };
 const Header = () => {
   const dispatch = useDispatch();

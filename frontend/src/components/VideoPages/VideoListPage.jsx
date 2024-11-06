@@ -7,11 +7,12 @@ import { RiLoginCircleLine } from "react-icons/ri";
 import durationFormatter from "../../Utils/durationFormatter";
 import viewsFormatter from "../../Utils/viewsFormatter";
 import timeFormatter from "../../Utils/timeformater";
+import api from "../../Utils/axiosHelper";
 const fetchVideoList = (v , id) => {
   if(v == 'playlist'){
-    return axios.get(`https://video-tube-eight.vercel.app/api/playlists/${id}`);
+    return api.get(`/api/playlists/${id}`);
   }
-  return axios.get(`https://video-tube-eight.vercel.app/api/users/${v}`);
+  return api.get(`/api/users/${v}`);
 };
 
 const VideoListPage = () => {

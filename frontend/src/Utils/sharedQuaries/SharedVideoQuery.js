@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import api from "../axiosHelper";
 
 const fetchVideos = () => {
-    return axios.get("https://video-tube-eight.vercel.app/api/videos" );
+    return api.get("/api/videos" );
     
 }
 // return axios.get("https://video-tube-eight.vercel.apphttps://video-tube-eight.vercel.app/api/videos" );

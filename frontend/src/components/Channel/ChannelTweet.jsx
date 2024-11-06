@@ -6,15 +6,16 @@ import timeFormatter from "../../Utils/timeformater";
 import { getLikes } from "../../Utils/sharedQuaries/sharedLikeQuery";
 import { useFetchLikesAndDislikes } from "../../Utils/sharedQuaries/sharedfetchcommentandLikes";
 import { useSelector } from "react-redux";
+import api from "../../Utils/axiosHelper";
 
 const fetchChannelTweets = (username) => {
-  return axios.get(`https://video-tube-eight.vercel.app/api/tweets/user/${username}`);
+  return api.get(`/api/tweets/user/${username}`);
 };
 
-const postTweet = (tweet) => axios.post("https://video-tube-eight.vercel.app/api/tweets", { content: tweet });
+const postTweet = (tweet) => api.post("/api/tweets", { content: tweet });
 
 const patchLike = ({ id, isLiked }) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/likes/toggle/t/${id}`, { isLiked });
+  api.post(`/api/likes/toggle/t/${id}`, { isLiked });
 
 const ChannelTweet = () => {
   const currUser = useSelector((state) => state.user.currentUser);

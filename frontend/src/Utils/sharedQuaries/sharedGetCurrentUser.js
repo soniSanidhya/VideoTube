@@ -1,7 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import api from "../axiosHelper";
 
-const getCurrentUser = () => axios.get("https://video-tube-eight.vercel.app/api/users/current-user" , {
+const getCurrentUser = () => api.get("/api/users/current-user" , {
   withCredentials: true,
 });
 

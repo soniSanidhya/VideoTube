@@ -3,11 +3,12 @@ import axios from 'axios';
 import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import viewsFormatter from '../../Utils/viewsFormatter';
+import api from '../../Utils/axiosHelper';
 
 const postSubcribe = (channelId) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelId}`);
+  api.post(`/api/subscriptions/c/${channelId}`);
 
-const fetchChannelSubcribers = (channelName) => axios.get(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelName}`);
+const fetchChannelSubcribers = (channelName) => api.get(`/api/subscriptions/c/${channelName}`);
 
 const ChannelSubcribed = () => {
 

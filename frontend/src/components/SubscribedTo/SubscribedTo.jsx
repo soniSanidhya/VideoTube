@@ -4,12 +4,13 @@ import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import viewsFormatter from "../../Utils/viewsFormatter";
 import { useSelector } from "react-redux";
+import api from "../../Utils/axiosHelper";
 
 const postSubcribe = (channelId) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelId}`);
+  api.post(`/api/subscriptions/c/${channelId}`);
 
 const fetchSubscribedTo = (userId) =>
-  axios.get(`https://video-tube-eight.vercel.app/api/subscriptions/u/${userId}`);
+  api.get(`/api/subscriptions/u/${userId}`);
 
 const SubscribedTo = () => {
   const isLogin = useSelector((state) => state.auth.isLogin);

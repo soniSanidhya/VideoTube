@@ -12,15 +12,16 @@ import { useFetchLikesAndDislikes } from "../../Utils/sharedQuaries/sharedfetchc
 import VideoModelPopUp from "../Channel/VideoModelPopUp";
 import EditVideoPopup from "../EditVideo/EditVideoPopup";
 import DeleteVideoPopup from "../EditVideo/DeleteVideoPopup";
+import api from "../../Utils/axiosHelper";
 
 const fetchChannelStats = (channelId) =>
-  axios.get(`https://video-tube-eight.vercel.app/api/dashboard/stats/c/${channelId}`);
+  api.get(`/api/dashboard/stats/c/${channelId}`);
 
 const fetchChannelVideos = (channelId) =>
-  axios.get(`https://video-tube-eight.vercel.app/api/dashboard/videos/c/${channelId}`);
+  api.get(`/api/dashboard/videos/c/${channelId}`);
 
 const patchVideoPublishStatus = (videoId) =>
-  axios.patch(`https://video-tube-eight.vercel.app/api/videos/toggle/publish/${videoId}`);
+  api.patch(`/api/videos/toggle/publish/${videoId}`);
 
 const Dashboard = () => {
   const user = useSelector((state) => state.user.currentUser);

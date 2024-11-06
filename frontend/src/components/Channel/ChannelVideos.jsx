@@ -8,9 +8,10 @@ import { Link, useParams } from "react-router-dom";
 import { useGetCurrentUser } from "../../Utils/sharedQuaries/sharedGetCurrentUser.js";
 import { useSelector } from "react-redux";
 import VideoModelPopUp from "./VideoModelPopUp.jsx";
+import api from "../../Utils/axiosHelper.js";
 
 const fetchChannelVideos = (username) => {
-  return axios.get(`https://video-tube-eight.vercel.app/api/videos/u/${username}`);
+  return api.get(`/api/videos/u/${username}`);
 };
 const ChannelVideos = () => {
   const { username } = useParams();

@@ -16,30 +16,31 @@ import {
 import { useSelector } from "react-redux";
 import { useFetchPlaylists } from "../../Utils/sharedQuaries/sharedFetchPlaylists";
 import { toast } from "react-toastify";
+import api from "../../Utils/axiosHelper";
 
 const postlike = (videoId, p) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/likes/toggle/${p}/${videoId}`);
+  api.post(`/api/likes/toggle/${p}/${videoId}`);
 
 const postLike = ({ id, isLiked }) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/likes/toggle/v/${id}`, { isLiked });
+  api.post(`/api/likes/toggle/v/${id}`, { isLiked });
 
 const postComment = (videoId, comment) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/comments/${videoId}`, { content: comment });
+ api.post(`/api/comments/${videoId}`, { content: comment });
 
 const postSubcribe = (channelId) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelId}`);
+ api.post(`/api/subscriptions/c/${channelId}`);
 
 const postToggleVideoinPlaylist = ({ playlistId, videoId }) =>
-  axios.patch(`https://video-tube-eight.vercel.app/api/playlists/toggleVideo/${videoId}/${playlistId}`);
+  api.patch(`/api/playlists/toggleVideo/${videoId}/${playlistId}`);
 
 const postCreatePlaylist = (playlistName) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/playlists`, { name: playlistName });
+ api.post(`/api/playlists`, { name: playlistName });
 
-const patchVideoViews = (videoId) => axios.patch(`https://video-tube-eight.vercel.app/api/videos/update/views/${videoId}`);
+const patchVideoViews = (videoId) => api.patch(`/api/videos/update/views/${videoId}`);
 
-const fetchVideo = (videoId) => axios.get(`https://video-tube-eight.vercel.app/api/videos/v/${videoId}`);
+const fetchVideo = (videoId) => api.get(`/api/videos/v/${videoId}`);
 
-const patchWatchHistory = (videoId) => axios.patch(`https://video-tube-eight.vercel.app/api/users/updateWatchHistory`, {videoId});
+const patchWatchHistory = (videoId) => api.patch(`/api/users/updateWatchHistory`, {videoId});
 
 const VideoDetailpage = () => {
   const user = useSelector((state) => state.user.currentUser);

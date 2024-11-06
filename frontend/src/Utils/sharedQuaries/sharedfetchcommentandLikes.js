@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import api from "../axiosHelper";
 
 const fetchLikes = (videoId) => (
   axios.get(`https://video-tube-eight.vercel.app/api/likes/getLikes/${videoId}`)
@@ -10,7 +11,7 @@ const fetchDisLikes = (videoId) => (
 )
 
 const fetchComments = (videoId) => (
-  axios.get(`https://video-tube-eight.vercel.app/api/comments/${videoId}`)
+  api.get(`/api/comments/${videoId}`)
 )
 const useFetchLikesAndDislikes = (videoId , enabled = false)=>{
   const {data : like , isError : isErrorinLike , refetch} = useQuery({

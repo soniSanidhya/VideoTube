@@ -6,9 +6,10 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import { useGetCurrentUser } from "../../Utils/sharedQuaries/sharedGetCurrentUser";
 import { toast } from "react-toastify";
+import api from "../../Utils/axiosHelper";
 
 const postSubcribe = (channelId) =>
-  axios.post(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelId}`);
+  api.post(`/api/subscriptions/c/${channelId}`);
 
 const ChannelDetails = ({ isChannel }) => {
   const isLogin = useSelector((state) => state.auth.isLogin);

@@ -2,7 +2,8 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-const patchVideo = ({form , videoId})=> axios.patch(`https://video-tube-eight.vercel.app/api/videos/v/${videoId}`, form);
+import api from "../../Utils/axiosHelper";
+const patchVideo = ({form , videoId})=> api.patch(`/api/videos/v/${videoId}`, form);
 
 const EditVideoPopup = ({ video }) => {
 

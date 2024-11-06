@@ -2,8 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import React from "react";
 import { toast } from "react-toastify";
+import api from "../../Utils/axiosHelper";
 
-const deleteVideo = ({ videoId }) => axios.delete(`https://video-tube-eight.vercel.app/api/videos/v/${videoId}`);
+const deleteVideo = ({ videoId }) => api.delete(`/api/videos/v/${videoId}`);
 
 const DeleteVideoPopup = ({ video }) => {
   const { mutate: deleteVideoMutation } = useMutation({

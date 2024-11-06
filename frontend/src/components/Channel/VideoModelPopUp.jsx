@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { useEffect } from 'react';
 import sizeFormatter from '../../Utils/sizeFormatter';
 
-const postVideo = (form) => axios.post('https://video-tube-eight.vercel.app/api/videos' , form);
+const postVideo = (form) =>api.post('/api/videos' , form);
 
 const VideoModelPopUp = (uploaded) => {
     const [title, setTitle] = React.useState('');

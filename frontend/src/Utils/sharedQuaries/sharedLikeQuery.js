@@ -1,11 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import api from "../axiosHelper";
 const fetchLikes = (postId) => {
   return axios.get(`/api/likes/${postId}`);
 };
 
 const toggleLike = (postId , post) => {
-  return axios.post(`https://video-tube-eight.vercel.app/api/like/toggle/${post}/${postId}`);
+  return api.post(`/api/like/toggle/${post}/${postId}`);
 };
 
 const getLikes = (postId) => {
