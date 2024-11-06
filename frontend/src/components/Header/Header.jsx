@@ -209,6 +209,7 @@ const Header = () => {
           </div>
           <ul className="my-4 flex w-full flex-wrap gap-2 px-4 sm:hidden">
             <li className="w-full">
+            <Link to="/videoList/likedVideos">
               <button className="flex w-full items-center justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:bg-[#ae7aff] hover:text-black focus:border-[#ae7aff] focus:bg-[#ae7aff] focus:text-black">
                 <span className="inline-block w-full max-w-[20px] group-hover:mr-4 lg:mr-4">
                   <svg
@@ -228,8 +229,10 @@ const Header = () => {
                 </span>
                 <span>Liked Videos</span>
               </button>
+              </Link>
             </li>
             <li className="w-full">
+            <Link to="/videoList/myVideos">
               <button className="flex w-full items-center justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:bg-[#ae7aff] hover:text-black focus:border-[#ae7aff] focus:bg-[#ae7aff] focus:text-black">
                 <span className="inline-block w-full max-w-[20px] group-hover:mr-4 lg:mr-4">
                   <svg
@@ -256,6 +259,7 @@ const Header = () => {
                 </span>
                 <span>My Content</span>
               </button>
+              </Link>
             </li>
             <li className="w-full">
               <button className="flex w-full items-center justify-start gap-x-4 border border-white px-4 py-1.5 text-left hover:bg-[#ae7aff] hover:text-black focus:border-[#ae7aff] focus:bg-[#ae7aff] focus:text-black">
