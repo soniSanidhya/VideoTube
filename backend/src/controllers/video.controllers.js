@@ -9,6 +9,10 @@ import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js
 const getAllVideos = asyncHandler(async (req, res) => {
     const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
     //TODO: get all videos based on query, sort, pagination
+
+    console.log("get all videos");
+    
+
     const allVideos = await Video.find()
         .populate("owner", "username avatar fullName")
         .sort({ createdAt: -1 });
