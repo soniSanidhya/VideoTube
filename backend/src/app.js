@@ -5,7 +5,7 @@ const app = express();
 
 
 app.use(cors({
-    origin: 'https://video-tube-1in9.vercel.app',
+    origin: 'https://videotube-one.vercel.app/',
     credentials: true
 }));
 app.use(express.json({limit : "16kb"}));
