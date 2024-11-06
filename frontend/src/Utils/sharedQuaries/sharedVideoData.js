@@ -2,19 +2,19 @@ import { useQueries } from '@tanstack/react-query';
 import axios from 'axios';
 
 const fetchVideo = (videoId) => {
-    return axios.get(`/api/videos/v/${videoId}`);
+    return axios.get(`https://video-tube-eight.vercel.app/api/videos/v/${videoId}`);
   };
   
   const fetchComments = (videoId) => {
-    return axios.get(`/api/comments/${videoId}`);
+    return axios.get(`https://video-tube-eight.vercel.app/api/comments/${videoId}`);
   };
   
   const fetchLikes = (videoId) => (
-    axios.get(`/api/likes/getLikes/${videoId}`)
+    axios.get(`https://video-tube-eight.vercel.app/api/likes/getLikes/${videoId}`)
   )
   
   const fetchDisLikes = (videoId) => (
-    axios.get(`/api/likes/getDisLikes/${videoId}`)
+    axios.get(`https://video-tube-eight.vercel.app/api/likes/getDisLikes/${videoId}`)
   )
 
 export const useCombinedVideoData = (videoId) => {

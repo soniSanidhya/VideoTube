@@ -9,9 +9,9 @@ import viewsFormatter from "../../Utils/viewsFormatter";
 import timeFormatter from "../../Utils/timeformater";
 const fetchVideoList = (v , id) => {
   if(v == 'playlist'){
-    return axios.get(`/api/playlists/${id}`);
+    return axios.get(`https://video-tube-eight.vercel.app/api/playlists/${id}`);
   }
-  return axios.get(`/api/users/${v}`);
+  return axios.get(`https://video-tube-eight.vercel.app/api/users/${v}`);
 };
 
 const VideoListPage = () => {

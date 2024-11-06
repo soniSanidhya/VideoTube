@@ -8,7 +8,7 @@ import { useGetCurrentUser } from "../../Utils/sharedQuaries/sharedGetCurrentUse
 import { toast } from "react-toastify";
 
 const postSubcribe = (channelId) =>
-  axios.post(`/api/subscriptions/c/${channelId}`);
+  axios.post(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelId}`);
 
 const ChannelDetails = ({ isChannel }) => {
   const isLogin = useSelector((state) => state.auth.isLogin);

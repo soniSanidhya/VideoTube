@@ -7,7 +7,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'https://video-tube-eight.vercel.app',
-        // changeOrigin: true,  // Ensures correct request origin
+        changeOrigin: true,  // Ensures correct request origin
         secure: true         // Ensures HTTPS
       }
     }

@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 import VideoModelPopUp from "./VideoModelPopUp.jsx";
 
 const fetchChannelVideos = (username) => {
-  return axios.get(`/api/videos/u/${username}`);
+  return axios.get(`https://video-tube-eight.vercel.app/api/videos/u/${username}`);
 };
 const ChannelVideos = () => {
   const { username } = useParams();

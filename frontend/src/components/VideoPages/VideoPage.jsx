@@ -18,7 +18,7 @@ const VideoPage = () => {
 
 
   const { data, isLoading, isError, error } = useSharedVideoQuery();
-  // const response = axios.get("/api/videos/");
+  // const response = axios.get("https://video-tube-eight.vercel.app/api/videos/");
   // // console.log("response", response);
   
   if (isLoading) {

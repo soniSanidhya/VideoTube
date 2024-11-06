@@ -8,7 +8,7 @@ import { logout } from "../../Utils/functionalties/isLoginSlice";
 import { useGetCurrentUser } from "../../Utils/sharedQuaries/sharedGetCurrentUser";
 
 const logOutUser = () => {
-  return axios.post("/api/users/logout");
+  return axios.post("https://video-tube-eight.vercel.app/api/users/logout");
 };
 const Header = () => {
   const dispatch = useDispatch();

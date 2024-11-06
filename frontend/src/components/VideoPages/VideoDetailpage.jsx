@@ -18,28 +18,28 @@ import { useFetchPlaylists } from "../../Utils/sharedQuaries/sharedFetchPlaylist
 import { toast } from "react-toastify";
 
 const postlike = (videoId, p) =>
-  axios.post(`/api/likes/toggle/${p}/${videoId}`);
+  axios.post(`https://video-tube-eight.vercel.app/api/likes/toggle/${p}/${videoId}`);
 
 const postLike = ({ id, isLiked }) =>
-  axios.post(`/api/likes/toggle/v/${id}`, { isLiked });
+  axios.post(`https://video-tube-eight.vercel.app/api/likes/toggle/v/${id}`, { isLiked });
 
 const postComment = (videoId, comment) =>
-  axios.post(`/api/comments/${videoId}`, { content: comment });
+  axios.post(`https://video-tube-eight.vercel.app/api/comments/${videoId}`, { content: comment });
 
 const postSubcribe = (channelId) =>
-  axios.post(`/api/subscriptions/c/${channelId}`);
+  axios.post(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelId}`);
 
 const postToggleVideoinPlaylist = ({ playlistId, videoId }) =>
-  axios.patch(`/api/playlists/toggleVideo/${videoId}/${playlistId}`);
+  axios.patch(`https://video-tube-eight.vercel.app/api/playlists/toggleVideo/${videoId}/${playlistId}`);
 
 const postCreatePlaylist = (playlistName) =>
-  axios.post(`/api/playlists`, { name: playlistName });
+  axios.post(`https://video-tube-eight.vercel.app/api/playlists`, { name: playlistName });
 
-const patchVideoViews = (videoId) => axios.patch(`/api/videos/update/views/${videoId}`);
+const patchVideoViews = (videoId) => axios.patch(`https://video-tube-eight.vercel.app/api/videos/update/views/${videoId}`);
 
-const fetchVideo = (videoId) => axios.get(`/api/videos/v/${videoId}`);
+const fetchVideo = (videoId) => axios.get(`https://video-tube-eight.vercel.app/api/videos/v/${videoId}`);
 
-const patchWatchHistory = (videoId) => axios.patch(`/api/users/updateWatchHistory`, {videoId});
+const patchWatchHistory = (videoId) => axios.patch(`https://video-tube-eight.vercel.app/api/users/updateWatchHistory`, {videoId});
 
 const VideoDetailpage = () => {
   const user = useSelector((state) => state.user.currentUser);

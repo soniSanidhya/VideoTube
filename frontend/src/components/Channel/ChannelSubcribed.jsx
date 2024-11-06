@@ -5,9 +5,9 @@ import { useOutletContext } from 'react-router-dom';
 import viewsFormatter from '../../Utils/viewsFormatter';
 
 const postSubcribe = (channelId) =>
-  axios.post(`/api/subscriptions/c/${channelId}`);
+  axios.post(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelId}`);
 
-const fetchChannelSubcribers = (channelName) => axios.get(`/api/subscriptions/c/${channelName}`);
+const fetchChannelSubcribers = (channelName) => axios.get(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelName}`);
 
 const ChannelSubcribed = () => {
 

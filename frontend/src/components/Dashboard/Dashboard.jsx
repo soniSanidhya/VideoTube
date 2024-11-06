@@ -14,13 +14,13 @@ import EditVideoPopup from "../EditVideo/EditVideoPopup";
 import DeleteVideoPopup from "../EditVideo/DeleteVideoPopup";
 
 const fetchChannelStats = (channelId) =>
-  axios.get(`/api/dashboard/stats/c/${channelId}`);
+  axios.get(`https://video-tube-eight.vercel.app/api/dashboard/stats/c/${channelId}`);
 
 const fetchChannelVideos = (channelId) =>
-  axios.get(`/api/dashboard/videos/c/${channelId}`);
+  axios.get(`https://video-tube-eight.vercel.app/api/dashboard/videos/c/${channelId}`);
 
 const patchVideoPublishStatus = (videoId) =>
-  axios.patch(`/api/videos/toggle/publish/${videoId}`);
+  axios.patch(`https://video-tube-eight.vercel.app/api/videos/toggle/publish/${videoId}`);
 
 const Dashboard = () => {
   const user = useSelector((state) => state.user.currentUser);

@@ -8,13 +8,13 @@ import { useFetchLikesAndDislikes } from "../../Utils/sharedQuaries/sharedfetchc
 import { useSelector } from "react-redux";
 
 const fetchChannelTweets = (username) => {
-  return axios.get(`/api/tweets/user/${username}`);
+  return axios.get(`https://video-tube-eight.vercel.app/api/tweets/user/${username}`);
 };
 
-const postTweet = (tweet) => axios.post("/api/tweets", { content: tweet });
+const postTweet = (tweet) => axios.post("https://video-tube-eight.vercel.app/api/tweets", { content: tweet });
 
 const patchLike = ({ id, isLiked }) =>
-  axios.post(`/api/likes/toggle/t/${id}`, { isLiked });
+  axios.post(`https://video-tube-eight.vercel.app/api/likes/toggle/t/${id}`, { isLiked });
 
 const ChannelTweet = () => {
   const currUser = useSelector((state) => state.user.currentUser);

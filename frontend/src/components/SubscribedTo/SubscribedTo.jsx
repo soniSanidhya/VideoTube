@@ -6,10 +6,10 @@ import viewsFormatter from "../../Utils/viewsFormatter";
 import { useSelector } from "react-redux";
 
 const postSubcribe = (channelId) =>
-  axios.post(`/api/subscriptions/c/${channelId}`);
+  axios.post(`https://video-tube-eight.vercel.app/api/subscriptions/c/${channelId}`);
 
 const fetchSubscribedTo = (userId) =>
-  axios.get(`/api/subscriptions/u/${userId}`);
+  axios.get(`https://video-tube-eight.vercel.app/api/subscriptions/u/${userId}`);
 
 const SubscribedTo = () => {
   const isLogin = useSelector((state) => state.auth.isLogin);
