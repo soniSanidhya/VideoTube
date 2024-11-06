@@ -37,6 +37,7 @@ const VideoModelPopUp = (uploaded) => {
     const form = new FormData();
     const handleSubmit = (e) => {
         e.preventDefault();
+        console.log("Submit");
         
         form.append('title',title);
         form.append('description', description);
