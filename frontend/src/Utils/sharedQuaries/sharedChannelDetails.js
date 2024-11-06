@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const fetchChannelDetails = (username) => {
-    return axios.get(`/api/users/channel/${username}`);
+    return axios.get(`https://video-tube-eight.vercel.app/api/users/channel/${username}`);
   };
 
   const usesharedFetchChannelDetails = (username) => {

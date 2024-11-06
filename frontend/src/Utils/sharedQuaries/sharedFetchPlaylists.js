@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 const fetchChannelPlaylist = async (username) => {
-    return axios.get(`/api/playlists/user/${username}`);
+    return axios.get(`https://video-tube-eight.vercel.app/api/playlists/user/${username}`);
   }
 
 export const useFetchPlaylists = (username) => {

@@ -6,7 +6,7 @@ import {  useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import { login } from '../../Utils/functionalties/isLoginSlice';
 
-const postRegister = (form) => axios.post('/api/users/register', form);
+const postRegister = (form) => axios.post('https://video-tube-eight.vercel.app/api/users/register', form);
 
 function SignupForm() {
   const dispatch = useDispatch();

@@ -5,7 +5,7 @@ const fetchLikes = (postId) => {
 };
 
 const toggleLike = (postId , post) => {
-  return axios.post(`/api/like/toggle/${post}/${postId}`);
+  return axios.post(`https://video-tube-eight.vercel.app/api/like/toggle/${post}/${postId}`);
 };
 
 const getLikes = (postId) => {

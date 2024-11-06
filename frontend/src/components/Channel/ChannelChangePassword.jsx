@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import errorFormatter from '../../Utils/errorFormatter';
 
-const updatePassword = ({oldPassword , newPassword}) => axios.patch("/api/users/changePassword" , {oldPassword , newPassword});
+const updatePassword = ({oldPassword , newPassword}) => axios.patch("https://video-tube-eight.vercel.app/api/users/changePassword" , {oldPassword , newPassword});
 
 const ChannelChangePassword = () => {
 

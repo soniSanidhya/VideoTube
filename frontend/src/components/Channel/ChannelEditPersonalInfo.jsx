@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
-const updatePersonalDetails =({fullName , email}) =>  axios.patch("/api/users/update-account" , {fullName , email} )
+const updatePersonalDetails =({fullName , email}) =>  axios.patch("https://video-tube-eight.vercel.app/api/users/update-account" , {fullName , email} )
 
 const ChannelEditPersonalInfo = () => {
 
