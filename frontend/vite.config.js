@@ -6,11 +6,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': {
-        target: 'https://video-tube-eight.vercel.app', // Your backend server URL
-        changeOrigin: true, // Changes the origin of the host header to the target URL
-        rewrite: (path) => path.replace(/^\/api/, ''), // Optional: rewrite path
-      }
+      // '/api': {
+      //   target: 'https://video-tube-eight.vercel.app', // Your backend server URL
+      //   changeOrigin: true, // Changes the origin of the host header to the target URL
+      //   rewrite: (path) => path.replace(/^\/api/, ''), // Optional: rewrite path
+      // }
+
+      '/api' : 'https://video-tube-eight.vercel.app'
     }
   }
 })
