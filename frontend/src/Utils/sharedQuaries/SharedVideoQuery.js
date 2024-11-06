@@ -2,7 +2,9 @@ import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 
 const fetchVideos = () => {
-    return axios.get("https://video-tube-eight.vercel.app/api/videos" );
+    // return axios.get("https://video-tube-eight.vercel.app/api/videos" );
+     return axios.get("/api/videos" );
+
 }
 
 export const useSharedVideoQuery = () => {
