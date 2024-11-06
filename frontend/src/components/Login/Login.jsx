@@ -119,13 +119,13 @@ const Login = () => {
             placeholder="Enter your email / username"
             className="mb-4 rounded-lg border bg-transparent px-3 py-2"
           />{" "}
-          <label htmlFor="email" className="mb-1 inline-block text-gray-300">
+          <label htmlFor="password" className="mb-1 inline-block text-gray-300">
             Password*
           </label>
           <input
             onChange={(e) => setPassword(e.target.value)}
-            id="email"
-            type="email"
+            id="password"
+            type="password"
             placeholder="Enter your Password"
             className="mb-4 rounded-lg border bg-transparent px-3 py-2"
           />
@@ -148,7 +148,7 @@ const Login = () => {
         draggable
         pauseOnHover
         theme="dark"
-        transition:Bounce
+        transition={Bounce}
       />
     </>
   );
