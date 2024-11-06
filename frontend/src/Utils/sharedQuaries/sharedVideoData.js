@@ -10,13 +10,13 @@ const fetchVideo = (videoId) => {
     return api.get(`/api/comments/${videoId}`);
   };
   
-  const fetchLikes = (videoId) => (
-    api.get(`/api/likes/getLikes/${videoId}`)
-  )
+  const fetchLikes = (videoId) => {
+   return api.get(`/api/likes/getLikes/${videoId}`)
+  }
   
-  const fetchDisLikes = (videoId) => (
-    api.get(`/api/likes/getDisLikes/${videoId}`)
-  )
+  const fetchDisLikes = (videoId) => {
+    return api.get(`/api/likes/getDisLikes/${videoId}`)
+   }
 
 export const useCombinedVideoData = (videoId) => {
   const queryFunctions = [fetchVideo, fetchComments, fetchLikes, fetchDisLikes];
