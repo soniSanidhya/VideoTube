@@ -6,17 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../Utils/functionalties/isLoginSlice";
 import { toast, ToastContainer } from "react-toastify";
+import api from "../../Utils/axiosHelper";
 
 const postLogin = ({ username, password }) => {
   // console.log("Called");
 
-  return axios.post(
-    "https://video-tube-eight.vercel.app/api/users/login",
-    { username, password },
-    {
-      withCredentials: true,
-    }
-  );
+  return api.post("/api/users/login", { username, password });
 };
 
 const Login = () => {
