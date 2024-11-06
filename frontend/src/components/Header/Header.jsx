@@ -319,12 +319,12 @@ const Header = () => {
                     <img
                       // data?.data.data.avatar
                       src={data?.data.data.avatar}
-                      alt="React-Patterns"
+                      alt={data?.data.data.username}
                       className="h-16 w-16 shrink-0 rounded-full sm:h-12 sm:w-12"
                     />
                     <div className="w-full pt-2 sm:hidden">
-                      <h6 className="font-semibold">React Patterns</h6>
-                      <p className="text-sm text-gray-300">@reactpatterns</p>
+                      <h6 className="font-semibold">{data?.data.data?.fullName}</h6>
+                      <p className="text-sm text-gray-300">@{data.data.data.username}</p>
                     </div>
                   </button>
                 </div>
