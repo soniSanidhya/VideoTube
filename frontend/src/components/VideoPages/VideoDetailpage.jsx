@@ -227,7 +227,7 @@ useEffect(() => {
             <div className="relative mb-4 w-full pt-[56%]">
               {videoData?.data.data.videoFile && (
                 <div className="absolute inset-0">
-                  <video className="h-full w-full" controls="" autoPlay="" muted="">
+                  <video className="h-full w-full" controls autoPlay muted>
                     <source
                       src={videoData?.data.data.videoFile}
                       type="video/mp4"
