@@ -4,7 +4,7 @@ import multer from "multer";
 const storage = multer.diskStorage(
     {
         destination : function (req , file , cb) {
-            console.log("multter");
+            console.log("multter middleware called");
             
             cb(null , "./public/temp");
         },
