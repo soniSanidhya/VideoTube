@@ -50,7 +50,8 @@ const registerUser = asyncHandler(async (req, res) => {
     // console.log(userExist);
 
     // console.log("user doesnot exist");
-
+    console.log(req?.files);
+    
     const avatarLocalPath = req.files?.avatar[0]?.path;
     // const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
@@ -60,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
         Array.isArray(req.files.coverImage) &&
         req.files.coverImage.length > 0
     ) {
-        coverImageLocalPath = req.files.coverImage[0].path;
+        coverImageLocalPath = req.files?.coverImage[0]?.path;
     }
 
     // console.log(avatarLocalPath);
