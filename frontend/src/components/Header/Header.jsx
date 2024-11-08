@@ -324,7 +324,7 @@ const Header = () => {
                     />
                     <div className="w-full pt-2 sm:hidden">
                       <h6 className="font-semibold">{data?.data.data?.fullName}</h6>
-                      <p className="text-sm text-gray-300">@{data.data.data.username}</p>
+                      <p className="text-sm text-gray-300">@{data?.data.data?.username}</p>
                     </div>
                   </button>
                 </div>
