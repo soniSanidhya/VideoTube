@@ -11,6 +11,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
     //TODO: get all videos based on query, sort, pagination
 
     console.log("get all videos");
+
     
 
     const allVideos = await Video.find()
@@ -29,28 +30,28 @@ const getAllVideos = asyncHandler(async (req, res) => {
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description } = req.body;
 
-    // console.log("hello hi video");
+    console.log(req);
 
     if (!title || !description) {
         throw new ApiError(400, "Please provide title and description");
     }
 
     // TODO: get video, upload to cloudinary, create video
-    const videoLocalPath = req.files?.videoFile[0]?.path;
-    const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
+    // const videoLocalPath = req.files?.videoFile[0]?.path;
+    // const thumbnailLocalPath = req.files?.thumbnail[0]?.path;
     if (!videoLocalPath) {
         throw new ApiError(400, "Please provide a video file");
     }
 
-    const uploadedVideo = await uploadOnCloudinary(videoLocalPath);
-    const uploadedThumbnail = await uploadOnCloudinary(thumbnailLocalPath);
+    // const uploadedVideo = await uploadOnCloudinary(videoLocalPath);
+    // const uploadedThumbnail = await uploadOnCloudinary(thumbnailLocalPath);
     if (!uploadedVideo.url && !uploadedThumbnail) {
         throw new ApiError(400, "Something went wrong while uploading video");
     }
     // console.log("duration: ", uploadedVideo.duration);
     const video = await Video.create({
-        videoFile: uploadedVideo.url,
-        thumbnail: uploadedThumbnail.url,
+        videoFile: req?.files[0]?.url,
+        thumbnail:  req?.files[1]?.url,
         title,
         description,
         duration: uploadedVideo.duration,

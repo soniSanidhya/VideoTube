@@ -10,7 +10,7 @@ import {
     updateViews,
 } from "../controllers/video.controllers.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
-import { upload } from "../middleware/multer.middleware.js";
+import { upload } from "../middleware/videoUploadMulter.js";
 
 const router = Router();
 router.route("/").get(getAllVideos);
