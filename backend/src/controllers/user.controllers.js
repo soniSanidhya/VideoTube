@@ -56,17 +56,22 @@ const registerUser = asyncHandler(async (req, res) => {
     // console.log("user doesnot exist");
     console.log(req?.files);
     
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    const avatarFile = req.files?.avatar?.[0];
+    const coverImageFile = req.files?.coverImage?.[0];
+    // const avatarFile = req.files?.avatar?.[0];
+            // const coverImageFile = req.files?.coverImage?.[0];
+
+    // const avatarLocalPath = req.files?.avatar[0]?.path;
     // const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
-    let coverImageLocalPath;
-    if (
-        req.files &&
-        Array.isArray(req.files.coverImage) &&
-        req.files.coverImage.length > 0
-    ) {
-        coverImageLocalPath = req.files?.coverImage[0]?.path;
-    }
+    // let coverImageFile;
+    // if (
+    //     req.files &&
+    //     Array.isArray(req.files.coverImage) &&
+    //     req.files.coverImage.length > 0
+    // ) {
+    //     coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // }
 
     // console.log(avatarLocalPath);
     // console.log(coverImageLocalPath);
@@ -82,8 +87,11 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, "User already exists");
     }
 
-    const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    const avatarUpload = await uploadOnCloudinary(avatarFile);
+    let coverImageUpload = null;
+    if (coverImageFile) {
+        coverImageUpload = await uploadOnCloudinary(coverImageFile);
+    }
     // console.log("Images Uploaded to cloudinary");
     // console.log(avatar);
     // console.log(coverImage);
@@ -93,8 +101,8 @@ const registerUser = asyncHandler(async (req, res) => {
         username: username.toLowerCase(),
         email,
         password,
-        avatar: avatar.url,
-        coverImage: coverImage?.url || "",
+        avatar: avatarUpload.secure_url,
+        coverImage: coverImageUpload?.secure_url || "",
     });
 
     // console.log("sent to database");
