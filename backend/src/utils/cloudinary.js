@@ -68,7 +68,8 @@
 
 // export { uploadOnCloudinary, deleteFromCloudinary };
 
-import { v2 as cloudinary } from "cloudinary";
+// import { v2 as cloudinary } from "cloudinary";
+import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 import stream from "stream";
 
