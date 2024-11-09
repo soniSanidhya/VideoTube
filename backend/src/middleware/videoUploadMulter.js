@@ -44,6 +44,9 @@ cloudinary.config({
     api_secret: process.env.API_SECRET_KEY,
 });
 
+console.log('cloudinary video multer');
+
+
 // Configure Cloudinary storage for Multer
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
@@ -54,6 +57,11 @@ const storage = new CloudinaryStorage({
   },
 });
 
-const upload = multer({ storage });
+// const upload = multer({ storage } , );
+const upload = multer({
+    storage,
+    limits: { fileSize: 100 * 1024 * 1024 }, // Set limit to 50 MB
+  });
+  
 
 export { upload };
