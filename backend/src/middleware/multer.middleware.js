@@ -1,7 +1,6 @@
 import fs from "fs";
 import multer from "multer";
-import fs from 'fs';
-import multer from 'multer';
+
 
 const tempDir = './public/temp';
 if (!fs.existsSync(tempDir)) {
