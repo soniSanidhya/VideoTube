@@ -70,6 +70,7 @@
 
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
+import stream from "stream";
 
 dotenv.config();
 
@@ -98,8 +99,8 @@ const uploadOnCloudinary = async (file) => {
                 }
             );
 
-            // Create buffer stream and pipe to uploadStream
-            const stream = require('stream');
+            // const stream = require('stream');
+            // const stream = require('stream');
             const bufferStream = new stream.PassThrough();
             bufferStream.end(file.buffer);
             bufferStream.pipe(uploadStream);
