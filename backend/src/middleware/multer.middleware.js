@@ -7,11 +7,9 @@ const storage = multer.diskStorage(
             try {
                 console.log("multter middleware called");
                 
-                const fs = require('fs');
+               
                 const dir = './public/temp';
-                if (!fs.existsSync(dir)){
-                    fs.mkdirSync(dir, { recursive: true });
-                }
+                
                 cb(null , dir);
             } catch (error) {
                 console.log(error);
