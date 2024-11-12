@@ -13,6 +13,7 @@ const VideoModelPopUp = (uploaded) => {
   const [isUploaded, setIsUploaded] = React.useState(false);
   const [thumbnail, setThumbnail] = React.useState(null);
   const [video, setVideo] = React.useState(null);
+  const [fileURL, setFileURL] = React.useState(null);
   // console.log(uploaded);
   const handleTitle = (e) => {
     setTitle(e.target.value);
@@ -26,9 +27,10 @@ const VideoModelPopUp = (uploaded) => {
 
   const handleVideo = (e) => {
     setVideo(e.target.files[0]);
+    setFileURL(URL.createObjectURL(video));
   };
 
-  console.log("video", video);
+  console.log("video", fileURL);
   
 
   const { mutate, isPending, isSuccess } = useMutation({
@@ -281,7 +283,7 @@ const VideoModelPopUp = (uploaded) => {
             {video ? (
                <video className="h-full w-full" controls autoPlay muted>
                <source
-                 src={video}
+                 src={video ? fileURL : ""} 
                  type="video/mp4"
                />
              </video>
