@@ -27,7 +27,7 @@ const VideoModelPopUp = (uploaded) => {
 
   const handleVideo = (e) => {
     setVideo(e.target.files[0]);
-    setFileURL(URL.createObjectURL(video));
+    setFileURL(URL.createObjectURL(e.target.files[0]));
   };
 
   console.log("video", fileURL);
@@ -283,7 +283,7 @@ const VideoModelPopUp = (uploaded) => {
             {video ? (
                <video className="h-full w-full" controls autoPlay muted>
                <source
-                 src={video ? fileURL : ""} 
+                 src={fileURL} 
                  type="video/mp4"
                />
              </video>
