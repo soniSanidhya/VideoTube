@@ -28,6 +28,9 @@ const VideoModelPopUp = (uploaded) => {
     setVideo(e.target.files[0]);
   };
 
+  console.log("video", video);
+  
+
   const { mutate, isPending, isSuccess } = useMutation({
     mutationFn: (form) => postVideo(form),
     onSuccess: () => {
@@ -278,7 +281,7 @@ const VideoModelPopUp = (uploaded) => {
             {video ? (
                <video className="h-full w-full" controls autoPlay muted>
                <source
-                 src={videoData?.data.data.videoFile}
+                 src={video}
                  type="video/mp4"
                />
              </video>
